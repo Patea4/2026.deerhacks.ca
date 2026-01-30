@@ -1,22 +1,13 @@
 import {
   archetypeAnswerOptions,
-  deerhacksExperienceOptions,
   deerhacksReachOptions,
   dietaryRestrictionsOptions,
-  educationOptions,
-  ethnicityOptions,
   genderOptions,
   hackathonExperienceOptions,
   interestsOptions,
   OTHER_SPECIFY,
   programOptions,
-  pronounOptions,
-  relationshipOptions,
-  schoolOptions,
-  shirtSizeOptions,
-  teamPreferenceOptions,
 } from '@/types/Application'
-import { matchIsValidTel } from 'mui-tel-input'
 import {
   boolean,
   enum as enumZod,
@@ -46,6 +37,10 @@ export const textFieldOptional = string()
 
 export const textArea = string().trim().max(1500, 'Maximum Character Count Reached')
 
+export const textAreaShort = string().trim().max(1000, 'Maximum Character Count Reached')
+
+export const textAreaPitch = string().trim().max(200, 'Maximum Character Count Reached')
+
 export const emailField = string()
   .trim()
   .toLowerCase()
@@ -55,12 +50,8 @@ export const emailField = string()
 
 export const urlField = string()
   .trim()
-  .max(128, 'Maximum Character Count Reached')
+  .max(256, 'Maximum Character Count Reached')
   .url('Invalid URL')
-
-const phoneField = textField.refine((str) => {
-  return matchIsValidTel(str)
-}, 'Invalid Phone Number')
 
 const checkBoxRequired = literal<boolean>(true, {
   errorMap: () => ({ message: 'Required' }),
@@ -76,128 +67,16 @@ const ageField = string()
   }, 'Invalid Age')
   .refine((str) => parseInt(str) >= 18, 'Must be 18+ to Apply')
 
-const gender = object({
+// AboutYou form - simplified demographics
+export const aboutYouZodForm = object({
+  age: ageField,
   gender: enumZod(genderOptions, { required_error: 'Required' }),
-  gender_other: textFieldOptional,
-}).superRefine(({ gender, gender_other }, refinementContext) => {
-  if (gender.includes(OTHER_SPECIFY) && !gender_other) {
-    refinementContext.addIssue({
-      code: 'custom',
-      message: 'Required',
-      path: ['gender_other'],
-    })
-  }
-  return refinementContext
 })
-
-const pronoun = object({
-  pronoun: enumZod(pronounOptions, { required_error: 'Required' }),
-  pronoun_other: textFieldOptional,
-}).superRefine(({ pronoun, pronoun_other }, refinementContext) => {
-  if (pronoun.includes(OTHER_SPECIFY) && !pronoun_other) {
-    refinementContext.addIssue({
-      code: 'custom',
-      message: 'Required',
-      path: ['pronoun_other'],
-    })
-  }
-  return refinementContext
-})
-
-const ethnicity = object({
-  ethnicity: enumZod(ethnicityOptions, { required_error: 'Required' }).array().min(1, 'Required'),
-  ethnicity_other: textFieldOptional,
-}).superRefine(({ ethnicity, ethnicity_other }, refinementContext) => {
-  if (ethnicity.includes(OTHER_SPECIFY) && !ethnicity_other) {
-    refinementContext.addIssue({
-      code: 'custom',
-      message: 'Required',
-      path: ['ethnicity_other'],
-    })
-  }
-  return refinementContext
-})
-
-const emergency_relationship = object({
-  emergency_relationship: enumZod(relationshipOptions, { required_error: 'Required' }),
-  emergency_relationship_other: textFieldOptional,
-}).superRefine(({ emergency_relationship, emergency_relationship_other }, refinementContext) => {
-  if (emergency_relationship.includes(OTHER_SPECIFY) && !emergency_relationship_other) {
-    refinementContext.addIssue({
-      code: 'custom',
-      message: 'Required',
-      path: ['emergency_relationship_other'],
-    })
-  }
-  return refinementContext
-})
-
-const diet_restriction = object({
-  diet_restriction: enumZod(dietaryRestrictionsOptions, { required_error: 'Required' })
-    .array()
-    .min(1, 'Required'),
-  diet_restriction_other: textFieldOptional,
-}).superRefine(({ diet_restriction, diet_restriction_other }, refinementContext) => {
-  if (diet_restriction.includes(OTHER_SPECIFY) && !diet_restriction_other) {
-    refinementContext.addIssue({
-      code: 'custom',
-      message: 'Required',
-      path: ['diet_restriction_other'],
-    })
-  }
-  return refinementContext
-})
-
-export const aboutYouZodForm = intersection(
-  gender.and(pronoun).and(ethnicity).and(emergency_relationship).and(diet_restriction),
-  object({
-    phone_number: phoneField,
-    age: ageField,
-    city: textField,
-    country: textField,
-    province: textFieldOptional,
-    emergency_name: textField,
-    emergency_number: phoneField,
-    shirt_size: enumZod(shirtSizeOptions, { required_error: 'Required' }),
-    additional_info: textArea.max(128, 'Maximum Character Count Reached').optional(),
-  })
-)
 export type AboutYouZodForm = inferZod<typeof aboutYouZodForm>
 
-const education = object({
-  education: enumZod(educationOptions, { required_error: 'Required' }),
-  education_other: textFieldOptional,
-}).superRefine(({ education, education_other }, refinementContext) => {
-  if (education.includes(OTHER_SPECIFY) && !education_other) {
-    refinementContext.addIssue({
-      code: 'custom',
-      message: 'Required',
-      path: ['education_other'],
-    })
-  }
-  return refinementContext
-})
-
-const school = object({
-  school: enumZod(schoolOptions, {
-    // need to overwrite invalid enum value error
-    errorMap: () => ({ message: 'Required' }),
-  }),
-  school_other: textFieldOptional,
-}).superRefine(({ school, school_other }, refinementContext) => {
-  if (school.includes(OTHER_SPECIFY) && !school_other) {
-    refinementContext.addIssue({
-      code: 'custom',
-      message: 'Required',
-      path: ['school_other'],
-    })
-  }
-  return refinementContext
-})
-
+// Experience form - education and professional info
 const program = object({
   program: enumZod(programOptions, {
-    // need to overwrite invalid enum value error
     errorMap: () => ({ message: 'Required' }),
   }),
   program_other: textFieldOptional,
@@ -212,83 +91,51 @@ const program = object({
   return refinementContext
 })
 
-const interests = object({
-  interests: enumZod(interestsOptions, { required_error: 'Required' })
-    .array()
-    .min(1, 'Required')
-    .max(5, 'Maximum Selection Reached'),
-  interests_other: textFieldOptional,
-}).superRefine(({ interests, interests_other }, refinementContext) => {
-  if (interests.includes(OTHER_SPECIFY) && !interests_other) {
-    refinementContext.addIssue({
-      code: 'custom',
-      message: 'Required',
-      path: ['interests_other'],
-    })
-  }
-  return refinementContext
-})
-
 export const experienceZodForm = intersection(
-  education.and(school).and(program).and(interests),
+  program,
   object({
+    school: string().trim().min(1, 'Required').max(256, 'Maximum Character Count Reached'),
     resume_file_name: string().min(1, 'Required'),
     resume_link: string().min(1, 'Required'),
     resume_update_count: number(),
-    portfolio: urlField.or(literal('')).or(literal(undefined)),
+    resume_consent: checkBoxRequired,
     github: urlField.or(literal('')).or(literal(undefined)),
     linkedin: urlField.or(literal('')).or(literal(undefined)),
-    resume_consent: checkBoxRequired,
     hackathon_experience: enumZod(hackathonExperienceOptions, { required_error: 'Required' }),
-    deerhacks_experience: enumZod(deerhacksExperienceOptions, { required_error: 'Required' })
+    previous_deerhacks_attender: boolean(),
+    interests: enumZod(interestsOptions, { required_error: 'Required' })
       .array()
       .min(1, 'Required'),
-    team_preference: enumZod(teamPreferenceOptions, { required_error: 'Required' }),
   })
 )
 export type ExperienceZodForm = inferZod<typeof experienceZodForm>
 
+// OpenEndedResponses form - essay questions
 export const openEndedResponsesZodForm = object({
-  deerhacks_pitch: textArea.min(1, 'Required'),
-  shared_project: textArea.min(1, 'Required'),
-  future_tech: textArea.min(1, 'Required'),
+  deerhacks_pitch: textAreaShort.min(1, 'Required'),
+  shared_project: textAreaShort.min(1, 'Required'),
+  future_tech: textAreaShort.min(1, 'Required'),
+  project_pitch: textAreaPitch.min(1, 'Required'),
 })
 export type OpenEndedResponsesZodForm = inferZod<typeof openEndedResponsesZodForm>
 
-const deerhacks_reach = object({
+// DeerHacks form - meals, dietary, fasting, and reach
+export const deerhacksZodForm = object({
   deerhacks_reach: enumZod(deerhacksReachOptions, { required_error: 'Required' }),
-  deerhacks_reach_other: textFieldOptional,
-}).superRefine(({ deerhacks_reach, deerhacks_reach_other }, refinementContext) => {
-  if (deerhacks_reach.includes(OTHER_SPECIFY) && !deerhacks_reach_other) {
-    refinementContext.addIssue({
-      code: 'custom',
-      message: 'Required',
-      path: ['deerhacks_reach_other'],
-    })
-  }
-  return refinementContext
+  diet_restriction: enumZod(dietaryRestrictionsOptions, { required_error: 'Required' })
+    .array()
+    .min(0),
+  day1_dinner: boolean(),
+  day2_breakfast: boolean(),
+  day2_lunch: boolean(),
+  day2_dinner: boolean(),
+  day3_breakfast: boolean(),
+  is_fasting: boolean(),
 })
-
-export const deerhacksZodForm = intersection(
-  deerhacks_reach,
-  object({
-    day1_dinner: boolean(),
-    day2_breakfast: boolean(),
-    day2_lunch: boolean(),
-    day2_dinner: boolean(),
-    day3_breakfast: boolean(),
-    mlh_authorize: boolean(),
-    mlh_code_agreement: boolean(),
-    mlh_subscribe: boolean(),
-  })
-)
 export type DeerhacksZodForm = inferZod<typeof deerhacksZodForm>
 
+// Archetype form - single question
 export const archetypeZodForm = object({
-  archetype_q1: enumZod(archetypeAnswerOptions, { required_error: 'Required' }),
-  archetype_q2: enumZod(archetypeAnswerOptions, { required_error: 'Required' }),
-  archetype_q3: enumZod(archetypeAnswerOptions, { required_error: 'Required' }),
-  archetype_q4: enumZod(archetypeAnswerOptions, { required_error: 'Required' }),
-  archetype_q5: enumZod(archetypeAnswerOptions, { required_error: 'Required' }),
+  archetype_answer: enumZod(archetypeAnswerOptions, { required_error: 'Required' }),
 })
 export type ArchetypeZodForm = inferZod<typeof archetypeZodForm>

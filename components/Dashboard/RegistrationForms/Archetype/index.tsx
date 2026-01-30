@@ -11,9 +11,8 @@ import RadioGroup from '@mui/material/RadioGroup'
 import Typography from '@mui/material/Typography'
 
 import ArchetypeResult from '@/components/Dashboard/RegistrationForms/Archetype/ArchetypeResult'
-import { archetypeQuestions, Planet } from '@/types/Application'
+import { answerToPlanetMap, archetypeQuestion, Planet } from '@/types/Application'
 import { ArchetypeZodForm } from '@/types/Zod'
-import { calculateArchetype } from '@/utils/archetypeCalculator'
 
 type Props = {
   form: UseFormReturn<ArchetypeZodForm>
@@ -32,19 +31,12 @@ const ArchetypeForm = (props: Props) => {
     control,
     handleSubmit,
     getValues,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = form
 
   const handleFormSubmit = (data: ArchetypeZodForm) => {
-    const answers = [
-      data.archetype_q1,
-      data.archetype_q2,
-      data.archetype_q3,
-      data.archetype_q4,
-      data.archetype_q5,
-    ]
-    const { archetype } = calculateArchetype(answers)
-    setCalculatedArchetype(archetype)
+    const planet = answerToPlanetMap[data.archetype_answer]
+    setCalculatedArchetype(planet)
     setShowResult(true)
   }
 
@@ -58,11 +50,13 @@ const ArchetypeForm = (props: Props) => {
         <Grid container direction="column" gap="1.5rem">
           <Typography variant="h2">Your Hacker Archetype</Typography>
           <Typography variant="h3" color="text.secondary" gutterBottom>
-            Based on your answers, we&apos;ve determined your hackathon personality!
+            Based on your answer, we&apos;ve determined your hackathon personality!
           </Typography>
         </Grid>
         <ArchetypeResult archetype={calculatedArchetype} />
-        <Button onClick={handleContinue}>Continue to Review</Button>
+        <Button onClick={handleContinue} disabled={isSubmitting}>
+          Continue to Review
+        </Button>
       </Grid>
     )
   }
@@ -71,46 +65,50 @@ const ArchetypeForm = (props: Props) => {
     <form noValidate onSubmit={handleSubmit(handleFormSubmit)}>
       <Grid container direction="column" gap="2.5rem">
         <Grid container direction="column" gap="1.5rem">
-          <Typography variant="h2">Discover Your Hacker Archetype</Typography>
-          <Typography variant="h3" color="text.secondary" gutterBottom>
-            Answer these 5 questions to find out which celestial archetype matches your
-            hackathon personality!
+          <Typography variant="h2">Planet Avatar Question</Typography>
+          <Typography variant="h3" color="primary" gutterBottom>
+            {archetypeQuestion.intro}
           </Typography>
         </Grid>
 
-        {archetypeQuestions.map((q) => (
-          <Card key={q.id} sx={{ backgroundColor: 'rgba(255,255,255,0.05)' }}>
-            <CardContent>
-              <Typography variant="h3" gutterBottom>
-                {q.id}. {q.question}
-              </Typography>
-              <Controller
-                name={`archetype_q${q.id}` as keyof ArchetypeZodForm}
-                control={control}
-                render={({ field }) => (
-                  <RadioGroup {...field}>
-                    {Object.entries(q.options).map(([key, value]) => (
-                      <FormControlLabel
-                        key={key}
-                        value={key}
-                        control={<Radio />}
-                        label={`${key}) ${value}`}
-                        sx={{ py: 0.5, alignItems: 'flex-start', '& .MuiRadio-root': { pt: 0 } }}
-                      />
-                    ))}
-                  </RadioGroup>
-                )}
-              />
-              {errors[`archetype_q${q.id}` as keyof ArchetypeZodForm] && (
-                <Typography color="error" variant="caption">
-                  Please select an answer
-                </Typography>
+        <Card sx={{ backgroundColor: 'rgba(255,255,255,0.05)' }}>
+          <CardContent>
+            <Typography variant="h3" gutterBottom sx={{ mb: 3 }}>
+              {archetypeQuestion.question}
+            </Typography>
+            <Controller
+              name="archetype_answer"
+              control={control}
+              render={({ field }) => (
+                <RadioGroup {...field}>
+                  {Object.entries(archetypeQuestion.options).map(([key, value]) => (
+                    <FormControlLabel
+                      key={key}
+                      value={key}
+                      control={<Radio />}
+                      label={value}
+                      sx={{
+                        py: 1,
+                        alignItems: 'flex-start',
+                        '& .MuiRadio-root': { pt: 0 },
+                        '& .MuiFormControlLabel-label': { pt: 0.5 },
+                      }}
+                    />
+                  ))}
+                </RadioGroup>
               )}
-            </CardContent>
-          </Card>
-        ))}
+            />
+            {errors.archetype_answer && (
+              <Typography color="error" variant="caption">
+                Please select an answer
+              </Typography>
+            )}
+          </CardContent>
+        </Card>
 
-        <Button type="submit">Reveal My Archetype</Button>
+        <Button type="submit" disabled={isSubmitting}>
+          Reveal My Archetype
+        </Button>
       </Grid>
     </form>
   )

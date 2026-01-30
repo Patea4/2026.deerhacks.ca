@@ -24,6 +24,7 @@ import FormReview from '@/components/Dashboard/RegistrationForms/Review'
 import BackButton from '@/components/Shared/BackButton'
 import FullPageLoader from '@/components/Shared/FullPageLoader'
 import FullPageSpinner from '@/components/Shared/FullPageSpinner'
+import ApplicationsPaused from '@/components/Shared/ApplicationsPaused'
 import { useAuth } from '@/contexts/Auth'
 import { useFeatureToggle } from '@/contexts/FeatureToggle'
 import { useToast } from '@/contexts/Toast'
@@ -34,6 +35,7 @@ import Error401Page from '@/pages/401'
 import Error404Page from '@/pages/404'
 import Error500Page from '@/pages/500'
 import theme from '@/styles/theme'
+import { getApiErrorMessage } from '@/utils/apiErrors'
 import { Application, ApplicationUpdateReq } from '@/types/Application'
 import { formKeys, FormSections } from '@/types/Registration'
 import { User } from '@/types/User'
@@ -71,13 +73,7 @@ const Registration = (props: Props) => {
   const formSections: FormSections = {
     AboutYou: {
       heading: 'About You',
-      subHeadings: [
-        'Personal Information',
-        'Profile Details',
-        'Location',
-        'Emergency Contact',
-        'Event Preferences',
-      ],
+      subHeadings: ['Personal Information', 'Demographics'],
       form: useForm<AboutYouZodForm>({
         mode: 'onChange',
         resolver: zodResolver(aboutYouZodForm),
@@ -86,7 +82,7 @@ const Registration = (props: Props) => {
     },
     Experience: {
       heading: 'Experience',
-      subHeadings: ['Education', 'Professional Journey', 'Hacker Details'],
+      subHeadings: ['Education', 'Hackathon Experience', 'Professional Links', 'Topics of Interest', 'Resume'],
       form: useForm<ExperienceZodForm>({
         mode: 'onChange',
         resolver: zodResolver(experienceZodForm),
@@ -95,7 +91,7 @@ const Registration = (props: Props) => {
     },
     OpenEndedResponses: {
       heading: 'Open Ended Responses',
-      subHeadings: ['DeerHacks Pitch', 'Past Project', 'Future Technology'],
+      subHeadings: ['Essays'],
       form: useForm<OpenEndedResponsesZodForm>({
         mode: 'onChange',
         resolver: zodResolver(openEndedResponsesZodForm),
@@ -104,7 +100,7 @@ const Registration = (props: Props) => {
     },
     DeerHacks: {
       heading: 'DeerHacks',
-      subHeadings: ['Reach', 'Meals'],
+      subHeadings: ['How You Heard About Us', 'Dietary Restrictions', 'Meals', 'Fasting'],
       form: useForm<DeerhacksZodForm>({
         mode: 'onChange',
         resolver: zodResolver(deerhacksZodForm),
@@ -112,8 +108,8 @@ const Registration = (props: Props) => {
       }),
     },
     Archetype: {
-      heading: 'Archetype Quiz',
-      subHeadings: ['Discover Your Hacker Personality'],
+      heading: 'Planet Avatar',
+      subHeadings: ['Fun Question'],
       form: useForm<ArchetypeZodForm>({
         mode: 'onChange',
         resolver: zodResolver(archetypeZodForm),
@@ -150,10 +146,10 @@ const Registration = (props: Props) => {
           })
         }
       },
-      onError: () => {
+      onError: (err) => {
         setToast({
           type: 'error',
-          message: 'Something went wrong, please try again later.',
+          message: getApiErrorMessage(err, 'Something went wrong, please try again later.'),
         })
       },
     })
@@ -299,7 +295,11 @@ const Registration = (props: Props) => {
                 borderRadius: '1rem',
                 transition: activeStep === i ? '0.5s all ease' : 'none',
                 opacity: activeStep === i ? '1' : '0',
-                boxShadow: activeStep === i ? '0px 0px 16px 0px #ffffff80' : 'transparent',
+                background: 'rgba(30, 30, 35, 0.5)',
+                backdropFilter: 'blur(16px)',
+                WebkitBackdropFilter: 'blur(16px)',
+                border: '1px solid rgba(255, 255, 255, 0.06)',
+                boxShadow: activeStep === i ? '0px 0px 16px 0px #ffffff40' : 'transparent',
                 ...(activeStep !== i && { height: 0, paddingY: 0 }),
               }}
             >
@@ -353,6 +353,7 @@ const Registration = (props: Props) => {
                         user={user}
                         application={application}
                         onSubmit={() => setOpenConfirmation(true)}
+                        isSubmitting={isLoading}
                       />
                     )}
                   </>
@@ -397,7 +398,8 @@ const RegistrationLoader = () => {
     authenticated &&
     user?.status &&
     allowedStatuses.includes(user.status) &&
-    (toggles.signupHacker || user.status !== 'registering')
+    (toggles.signupHacker || user.status !== 'registering') &&
+    !toggles.applicationsPaused
 
   const {
     data: applicationData,
@@ -426,16 +428,12 @@ const RegistrationLoader = () => {
     )
   }
 
+  if (toggles.applicationsPaused) {
+    return <ApplicationsPaused />
+  }
+
   if (!toggles.signupHacker && user?.status && user.status === 'registering') {
-    return (
-      <FullPageLoader
-        show
-        pulse={false}
-        text="Registration is unavailable at this time."
-        buttonText="Go Back"
-        buttonLink="/dashboard"
-      />
-    )
+    return <ApplicationsPaused />
   }
 
   if (applicationError || resumeError) return <Error500Page />

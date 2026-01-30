@@ -25,351 +25,114 @@ export type Application = {
    * email: string
    */
 
-  phone_number: string
-  is_subscribed: boolean
-
+  // Demographics (for internal data collection only - no effect on acceptance)
   age: number
-  gender: (typeof genderOptions)[number] | string
-  pronoun: (typeof pronounOptions)[number] | string
-  ethnicity: ((typeof ethnicityOptions)[number] | string)[]
-  country: string
-  city: string
-  province?: string
+  gender: (typeof genderOptions)[number]
 
-  emergency_name: string
-  emergency_number: string
-  emergency_relationship: (typeof relationshipOptions)[number] | string
-
-  shirt_size: (typeof shirtSizeOptions)[number]
-  diet_restriction: ((typeof dietaryRestrictionsOptions)[number] | string)[]
-  additional_info?: string
-
-  education: (typeof educationOptions)[number] | string
+  // Education
   school: string
   program: (typeof programOptions)[number] | string
+
+  // How they heard about us
+  deerhacks_reach: (typeof deerhacksReachOptions)[number]
+
+  // Hackathon Experience
+  hackathon_experience: (typeof hackathonExperienceOptions)[number]
+  previous_deerhacks_attender: boolean
+
+  // Professional Links
+  github?: string
+  linkedin?: string
 
   // Resume Fields, Outside of Application Endpoint
   resume_link: string
   resume_file_name: string
   resume_update_count: number
-
-  portfolio?: string
-  github?: string
-  linkedin?: string
   resume_consent: boolean
 
-  hackathon_experience: (typeof hackathonExperienceOptions)[number]
-  deerhacks_experience: (typeof deerhacksExperienceOptions)[number][]
-  team_preference: (typeof teamPreferenceOptions)[number]
-  interests: ((typeof interestsOptions)[number] | string)[]
+  // Topics of Interest
+  interests: (typeof interestsOptions)[number][]
 
+  // Essay Questions
   deerhacks_pitch: string
   shared_project: string
   future_tech: string
+  project_pitch: string
 
-  deerhacks_reach: (typeof deerhacksReachOptions)[number] | string
-
+  // Dietary & Meals
+  diet_restriction: (typeof dietaryRestrictionsOptions)[number][]
   day1_dinner: boolean
   day2_breakfast: boolean
   day2_lunch: boolean
   day2_dinner: boolean
   day3_breakfast: boolean
+  is_fasting: boolean
 
-  mlh_authorize: boolean
-  mlh_code_agreement: boolean
-  mlh_subscribe: boolean
-
-  // Archetype Quiz
-  archetype_answers: ArchetypeAnswer[]
+  // Archetype Quiz (single answer)
+  archetype_answer: ArchetypeAnswer
   archetype_scores: Record<Planet, number>
   archetype: Planet | ''
 }
 
-// Archetype Types
-export type ArchetypeAnswer = 'A' | 'B' | 'C' | 'D' | 'E' | ''
+// Archetype Types - now single answer A-J
+export type ArchetypeAnswer = 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G' | 'H' | 'I' | 'J' | ''
 
-export const archetypeAnswerOptions = ['A', 'B', 'C', 'D', 'E'] as const
+export const archetypeAnswerOptions = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'] as const
 
 export const planetOptions = [
-  'Venus',
-  'Neptune',
   'Earth',
-  'Saturn',
-  'Jupiter',
-  'Uranus',
-  'Sun',
-  'Mercury',
   'Mars',
+  'Venus',
+  'Mercury',
+  'Jupiter',
+  'Saturn',
+  'Neptune',
+  'Uranus',
   'Moon',
+  'Sun',
 ] as const
 
 export type Planet = (typeof planetOptions)[number]
 
-export const archetypeQuestions = [
-  {
-    id: 1,
-    question: "It's the first hour of the hackathon. Where are you?",
-    options: {
-      A: 'Sketching out the UI/UX and picking the perfect color palette.',
-      B: 'Setting up the repo, the database schema, and the dev environment.',
-      C: 'Mapping out the entire system architecture and how it scales to millions.',
-      D: "Researching that one obscure, experimental API you've been dying to try.",
-      E: 'Gathering the team to set goals and making sure everyone is hyped.',
-    },
+// Planet Avatar Question - single question with 10 options
+export const archetypeQuestion = {
+  id: 1,
+  intro: "This question is just for fun and will not affect your acceptance!",
+  question: "It's 2:33 AM. The demo is in 9 hours. It works on one machine, only if you're careful, and there are bugs that exist for reasons beyond human comprehension. You have no time to rebuild. \"We might be cooked guys.\" What do you do?",
+  options: {
+    A: 'Strip things down to the most reliable pieces and make something solid enough to show. Tie up loose ends, clean up edge cases, and refactor the janky parts.',
+    B: "Come up with a last-minute fix and go all in. Hammer at it nonstop until either it works or time's up. It'll work.",
+    C: 'Presentation is the priority now. Open the UI and begin tweaking and polishing. Make sure nothing embarrassing breaks on stage. Visuals will make the idea land even if parts fail.',
+    D: "Communication is key. Pull everyone together and clarify what's left. Rewrite the plan, and make sure each person knows exactly what they're responsible for.",
+    E: 'Zoom out and rethink the project structure. Reframe the project around the underlying system and change how the big pieces fit together.',
+    F: 'Debug debug debug. Trace error messages, check logs, and isolate the failure points to fix as many errors as possible.',
+    G: 'Time to pivot concepts. Start tossing out wild "what if" ideas that reframe the whole project and make the broken parts feel intentional or irrelevant.',
+    H: "Lean into the unconventional. Test an unusual library, API, or tool in a way it's not meant to be used. Rather than hiding the rough parts of your demo, suggest showcasing them as experimental aspects.",
+    I: 'Turn your flexibility to the max. Jump in wherever the biggest fire is, helping teammates unblock or recover. Fill gaps wherever needed (coding, testing, recovering morale). Get your team across the finish line.',
+    J: "Take initiative, renew confidence and keep morale high: remind everyone why this project is cool, keep energy up, and make sure the team doesn't spiral at 3 AM.",
   },
-  {
-    id: 2,
-    question: 'A critical bug appears at 3:00 AM. What is your move?',
-    options: {
-      A: "Stay calm, open the debugger, and systematically trace the stack until it's fixed.",
-      B: 'Find a quick, "dirty" workaround so you can keep moving fast.',
-      C: 'Check in on your teammates to see if they need coffee or a moral boost.',
-      D: "Realize the bug is a sign that the original concept was too boring—let's pivot!",
-      E: 'Document the bug and explain the technical debt to the "judges" in the final pitch.',
-    },
-  },
-  {
-    id: 3,
-    question: 'What does your "Dream Project" look like?',
-    options: {
-      A: 'A rock-solid tool that solves a real-world, everyday problem perfectly.',
-      B: 'A visually stunning masterpiece that feels like high art.',
-      C: 'A moonshot idea that sounds impossible but could change the world.',
-      D: 'Something "weird" and technically challenging that nobody else would think of.',
-      E: "Whatever my team needs most to succeed; I'm happy to fill the gaps.",
-    },
-  },
-  {
-    id: 4,
-    question: 'In a team setting, which role do you naturally gravitate toward?',
-    options: {
-      A: 'The person who handles the "talking"—the pitch, the demo, and the networking.',
-      B: 'The person who keeps the momentum high and the team focused on the win.',
-      C: 'The person who ensures the project actually functions and meets the requirements.',
-      D: 'The person who thinks of the "What Ifs" and creative "Wow" factors.',
-      E: 'The leader who ensures the vision stays consistent and everyone is aligned.',
-    },
-  },
-  {
-    id: 5,
-    question: 'Which of these "Hackathon Superpowers" would you choose?',
-    options: {
-      A: 'Efficiency: The ability to code faster than anyone else.',
-      B: 'Clarity: The ability to explain complex ideas to anyone.',
-      C: 'Resilience: The ability to hunt down every last bug without tiring.',
-      D: 'Innovation: The ability to see solutions that literally no one else sees.',
-      E: 'Cohesion: The ability to turn a group of strangers into a winning team.',
-    },
-  },
-] as const
+} as const
+
+// Maps answer to planet
+export const answerToPlanetMap: Record<string, Planet> = {
+  A: 'Earth',
+  B: 'Mars',
+  C: 'Venus',
+  D: 'Mercury',
+  E: 'Jupiter',
+  F: 'Saturn',
+  G: 'Neptune',
+  H: 'Uranus',
+  I: 'Moon',
+  J: 'Sun',
+}
 
 export const OTHER_SPECIFY = 'Other (Specify)'
 
-export const genderOptions = ['Male', 'Female', 'Prefer not to say', OTHER_SPECIFY] as const
+// Simplified gender options - no "Other (Specify)"
+export const genderOptions = ['Male', 'Female', 'Non-Binary', 'Choose not to answer'] as const
 
-export const pronounOptions = ['He / Him', 'She / Her', 'They / Them', OTHER_SPECIFY] as const
-
-export const ethnicityOptions = [
-  'Arab',
-  'Black',
-  'Chinese',
-  'Filipino',
-  'Indigenous',
-  'Japanese',
-  'Korean',
-  'Latin American',
-  'South Asian',
-  'Southeast Asian',
-  'West Asian',
-  'White',
-  'Prefer not to say',
-  OTHER_SPECIFY,
-] as const
-
-export const relationshipOptions = [
-  'Parent / Guardian',
-  'Sibling',
-  'Spouse',
-  'Friend',
-  OTHER_SPECIFY,
-] as const
-
-export const shirtSizeOptions = ['XS', 'S', 'M', 'L', 'XL', 'XXL'] as const
-
-export const dietaryRestrictionsOptions = [
-  'None',
-  'Dairy free',
-  'Gluten free',
-  'Halal',
-  'Kosher',
-  'Nut Allergy',
-  'Vegan',
-  'Vegetarian',
-  OTHER_SPECIFY,
-] as const
-
-export const educationOptions = [
-  'Secondary / High School',
-  "Undergraduate (Bachelor's Degree)",
-  "Graduate (Master's Degree)",
-  'Doctoral / PhD',
-  OTHER_SPECIFY,
-] as const
-
-export const schoolOptions = [
-  'Acadia University',
-  'Algonquin College',
-  'Ashton College',
-  'Assumption University',
-  'Athabasca University',
-  'Augustana University College',
-  "Bishop's University",
-  'Bow Valley College',
-  'Brandon University',
-  'British Columbia Institute of Technology',
-  'British Columbia Open University',
-  'Brock University',
-  'Camosun College',
-  'Canadian College of Business & Computers',
-  'Canadian Mennonite University',
-  'Capilano College',
-  'Carleton University',
-  'Centennial College',
-  'College of Bois-de-Boulogne',
-  'College of New Caledonia',
-  'College of the Rockies',
-  'Collège Boréal',
-  'Collège Universel Gatineau',
-  'Columbia College',
-  'Concordia University',
-  'Concordia University College of Alberta',
-  'Conestoga College',
-  'Cégep de Saint-Jérôme',
-  'Dalhousie University',
-  'DeVry Institute of Technology',
-  'Dominican College of Philosophy & Theology',
-  'Douglas College',
-  'Durham College',
-  'Emily Carr Institute of Art & Design',
-  'École Polytechnique de Montréal, Université de Montréal',
-  'École de technologie supérieure, Université du Québec',
-  'École des Hautes Études Commerciales',
-  "École nationale d'administration publique, Université du Québec",
-  'Fanshawe College',
-  'First Nations University of Canada',
-  'George Brown College',
-  'Humber College',
-  'Huron University College',
-  'Institut Armand-Frappier, Université du Québec',
-  'Institut National de la Recherche Scientifique, Université du Québec',
-  "King's University College",
-  'Kingston College',
-  'Kwantleen University College',
-  'Lakehead University',
-  'Lambton College',
-  'Langara College',
-  'Lansbridge University',
-  'Laurentian University of Sudbury',
-  'Luther College',
-  'MacEwan University',
-  'Malaspina University College',
-  'McGill University',
-  'McMaster University',
-  'Memorial University of Newfoundland',
-  'Mohawk College',
-  'Mount Allison University',
-  'Mount Royal University',
-  'Mount Saint Vincent University',
-  'Nicola Valley Institute of Technology',
-  'Nipissing University',
-  'North Island College',
-  'Northern Alberta Institute of Technology',
-  'Northern Lights College',
-  'Nova Scotia Agricultural College',
-  'Nova Scotia College of Art & Design',
-  'Okanagan University College',
-  'Ontario College of Art & Design',
-  'Ontario Tech University',
-  'Pacific International College',
-  "Queen's University",
-  'Quest University',
-  'Redeemer College',
-  'Regent College',
-  'Royal Military College of Canada',
-  'Royal Roads University',
-  'Ryerson Polytechnic University',
-  'Saskatchewan Indian Federated College',
-  'Sauder School of Business',
-  'Selkirk College',
-  'Seneca College',
-  'Sheridan College',
-  'Simon Fraser University',
-  'Southern Alberta Institute of Technology',
-  'St. Anne University',
-  'St. Clair College',
-  'St. Francis Xavier University',
-  "St. Mary's University",
-  'St. Paul University',
-  'St. Thomas University',
-  'Thompson Rivers University',
-  'Toronto Metropolitan University',
-  'Trent University',
-  'Trinity Western University',
-  'Télé-université, Université du Québec',
-  'University Canada West',
-  'University College of Cape Breton',
-  'University College of Saint-Boniface',
-  'University College of the Cariboo',
-  'University of Alberta',
-  'University of British Columbia',
-  'University of Calgary',
-  'University of Guelph',
-  "University of King's College",
-  'University of Lethbridge',
-  'University of Manitoba',
-  'University of Moncton',
-  'University of Moncton, Edmundston',
-  'University of Moncton, Shippagan',
-  'University of New Brunswick',
-  'University of New Brunswick, Saint John',
-  'University of Northern British Columbia',
-  'University of Ontario Institute of Technology',
-  'University of Ottawa',
-  'University of Prince Edward Island',
-  'University of Québec',
-  'University of Regina',
-  'University of Saskatchewan',
-  "University of St. Jerome's College",
-  'University of Sudbury',
-  'University of Toronto',
-  'University of Toronto, Mississauga',
-  'University of Toronto, Scarborough',
-  'University of Trinity College',
-  'University of Victoria',
-  'University of Waterloo',
-  'University of Western Ontario',
-  'University of Windsor',
-  'University of Winnipeg',
-  'University of the Fraser Valley',
-  'Université Laval',
-  'Université de Montréal',
-  'Université de Sherbrooke',
-  'Université du Québec en Abitibi-Témiscamingue',
-  'Université du Québec en Outaouais',
-  'Université du Québec à Chicoutimi',
-  'Université du Québec à Montréal',
-  'Université du Québec à Rimouski',
-  'Université du Québec à Trois-Rivières',
-  'Vancouver Community College',
-  'Vanier College',
-  'Victoria University Toronto, University of Toronto',
-  'Wilfrid Laurier University',
-  'William and Catherine Booth College',
-  'York University',
-  'Yukon College',
-  OTHER_SPECIFY,
-] as const
-
+// Programs - keeping existing list with OTHER_SPECIFY
 export const programOptions = [
   'Accounting',
   'Actuarial Science',
@@ -547,61 +310,35 @@ export const programOptions = [
   OTHER_SPECIFY,
 ] as const
 
+// Simplified hackathon experience options
 export const hackathonExperienceOptions = [
-  'Rookie (This Is My First Hackathon)',
-  'Enthusiast (1-2 Hackathons)',
-  'Veteran (3-5 Hackathons)',
-  'Expert (5+ Hackathons)',
+  'First timer',
+  'Enthusiast (1-2)',
+  'Veteran (3-5)',
 ] as const
 
-export const deerhacksExperienceOptions = [
-  'DeerHacks First Timer',
-  'DeerHacks I (April 2022)',
-  'DeerHacks II (April 2023)',
-  'DeerHacks III (February 2024)',
-] as const
-
-export const teamPreferenceOptions = [
-  'Hacker With a Team',
-  'Hacker Looking for Teammates',
-  'Solo Hacker',
-] as const
-
+// Updated interests options
 export const interestsOptions = [
-  '3D Printing & CAD',
-  'Artificial Intelligence',
-  'Augmented & Virtual Reality',
-  'Bioinformatics',
-  'Blockchain',
-  'Business & Entrepreneurship',
+  'AI',
+  'BioInformatics',
   'Cloud Technologies',
-  'Computer Vision',
-  'Cybersecurity',
+  'Cyber Security',
   'Data Science & Analytics',
-  'Digital Marketing',
-  'Financial Technology',
-  'Game Development',
+  'Software Engineering',
   'Machine Learning',
-  'Mobile App Development',
-  'Natural Language Processing (NLP)',
-  'Product Management',
-  'Robotics',
-  'UX & UI Design',
-  'Web Development',
-  OTHER_SPECIFY,
+  'Natural Language Processing',
+  'Web Dev',
+  'UX/UI',
+  'Game Development',
 ] as const
 
-export const deerhacksReachOptions = [
-  'Major League Hacking Website',
-  'MCSS Instagram Page',
-  'MCSS LinkedIn Page',
-  'DeerHacks Website',
-  'DeerHacks Instagram Page',
-  'DeerHacks LinkedIn Page',
-  'Email Newsletter',
-  'University / College Announcement',
-  'Previous Event Participation',
-  'In-person Advertising',
-  'Word of Mouth',
-  OTHER_SPECIFY,
+// Simplified deerhacks reach options
+export const deerhacksReachOptions = ['University', 'Social Media', 'Other'] as const
+
+// Simplified dietary restrictions - no "None" or "Other"
+export const dietaryRestrictionsOptions = [
+  'Halal',
+  'Vegetarian',
+  'Vegan',
+  'Gluten-Free',
 ] as const

@@ -18,6 +18,9 @@ const INITIAL_FEATURE_TOGGLES = {
   signupVolunteer: process.env.NEXT_PUBLIC_TOGGLE_SIGNUP_VOLUNTEER === 'true',
   // Toggle for mentor registration period
   signupMentor: process.env.NEXT_PUBLIC_TOGGLE_SIGNUP_MENTOR === 'true',
+
+  // Toggle to pause applications globally
+  applicationsPaused: process.env.NEXT_PUBLIC_TOGGLE_APPLICATIONS_PAUSED === 'true',
 } as const
 
 type FeatureToggleKey = keyof typeof INITIAL_FEATURE_TOGGLES

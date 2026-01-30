@@ -19,20 +19,23 @@ const TileRegistration = (props: Props) => {
   const { toggles } = useFeatureToggle()
 
   const disabledUser = ['pending', 'rejected'].includes(status)
-  const disabled = disabledUser || (!toggles.signupHacker && status === 'registering')
+  const paused = toggles.applicationsPaused
+  const disabled = paused || disabledUser || (!toggles.signupHacker && status === 'registering')
   const noApplication = ['admin', 'moderator', 'guest', 'volunteer'].includes(status)
 
   return (
     <Card
       variant={disabled || noApplication ? 'outlined' : 'elevation'}
       elevation={disabled || noApplication ? 0 : 5}
-      {...(!disabled &&
-        !noApplication && {
-          sx: {
-            backgroundImage:
-              'radial-gradient(circle closest-corner at 62% 44%, rgb(209 52 132 / 30%), rgba(255, 255, 255, 0)),radial-gradient(circle farthest-side at 75% 16%, rgb(255 255 255 / 10%), rgba(255, 255, 255, 0) 35%),radial-gradient(circle closest-corner at 32% 38%, rgb(87 65 174 / 20%), rgba(255, 255, 255, 0) 76%),radial-gradient(circle farthest-side at 69% 81%, rgba(255, 0, 48, 0.1), rgba(255, 255, 255, 0) 76%),linear-gradient(#202124, #202124)',
-          },
-        })}
+      sx={{
+        background:
+          !disabled && !noApplication
+            ? 'radial-gradient(circle at 65% 40%, rgba(249, 144, 196, 0.18), transparent 55%), rgba(30, 30, 35, 0.7)'
+            : 'rgba(30, 30, 35, 0.55)',
+        backdropFilter: 'blur(20px)',
+        WebkitBackdropFilter: 'blur(20px)',
+        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+      }}
     >
       <CardActionArea
         href="/dashboard/registration"
@@ -53,7 +56,9 @@ const TileRegistration = (props: Props) => {
             Register
           </Typography>
           <Typography variant="body2">
-            {disabled
+            {paused
+              ? 'Applications are temporarily paused. Please check back soon.'
+              : disabled
               ? `Registration is closed ${
                   status === 'pending'
                     ? 'while email is unverified'

@@ -15,6 +15,7 @@ import { useFeatureToggle } from '@/contexts/FeatureToggle'
 
 const About = () => {
   const { toggles } = useFeatureToggle()
+  const applicationsPaused = toggles.applicationsPaused
 
   return (
     <Container
@@ -93,7 +94,12 @@ const About = () => {
           width="min(100%, 300px)"
           pt="3rem"
         >
-          <SignUpButton text="Hack the Horizon!" href="/login" glow fullWidth />
+          <SignUpButton
+            text={applicationsPaused ? 'Applications Paused' : 'Hack the Horizon!'}
+            href={applicationsPaused ? '/applications-paused' : '/login'}
+            glow
+            fullWidth
+          />
         </Box>
       )}
       {toggles.signupVolunteer && toggles.signupMentor && (

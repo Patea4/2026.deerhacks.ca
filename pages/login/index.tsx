@@ -95,6 +95,12 @@ const Login = () => {
               <Typography>
                 Login to access registration, hacker perks and more on the DeerHacks Dashboard!
               </Typography>
+              {toggles.applicationsPaused && (
+                <Alert severity="warning" sx={{ width: '100%' }}>
+                  Applications are temporarily paused while we review things. Please check back in a
+                  few moments.
+                </Alert>
+              )}
               <Collapse in={showAlert} sx={{ width: '100%' }}>
                 <Alert severity={alert?.severity} sx={{ width: '100%' }}>
                   {alert?.message}
@@ -103,6 +109,7 @@ const Login = () => {
               <SignUpButton
                 text="Continue"
                 fullWidth
+                disabled={toggles.applicationsPaused}
                 onClick={() => window.open(path, '_blank', 'width=500,height=750')}
               />
               <Typography fontSize="0.75rem">
@@ -158,6 +165,11 @@ const getAlertDetails = (context: string): AlertDetails => {
             to continue.
           </>
         ),
+      }
+    case 'busy':
+      return {
+        severity: 'warning',
+        message: "We're busy right now, please try again in a few moments.",
       }
     default:
       return { severity: 'error', message: 'Something went wrong, try again later.' }

@@ -2,6 +2,7 @@ import { useRouter } from 'next/router'
 
 import { APIError } from '@/api/types'
 import { useAPI } from '@/contexts/API'
+import { isBusyError } from '@/utils/apiErrors'
 
 export const useUserLogin = () => {
   const api = useAPI()
@@ -14,6 +15,10 @@ export const useUserLogin = () => {
     onError: (err) => {
       if ((err as APIError).apiError.status == 403) {
         router.replace('/login?context=unverified')
+        return
+      }
+      if (isBusyError(err)) {
+        router.replace('/login?context=busy')
         return
       }
       router.replace('/login?context=')

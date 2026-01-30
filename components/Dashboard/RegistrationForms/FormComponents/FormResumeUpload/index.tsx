@@ -13,12 +13,12 @@ import Grid from '@mui/material/Grid'
 import Tooltip from '@mui/material/Tooltip'
 import Typography from '@mui/material/Typography'
 
-import { APIError } from '@/api/types'
 import LoadingButton from '@/components/Dashboard/LoadingButton'
 import { useToast } from '@/contexts/Toast'
 import { useResumeUpdate } from '@/hooks/Application/useResumeUpdate'
 import theme from '@/styles/theme'
 import { ResumeUpdateResp } from '@/types/Application'
+import { getApiErrorMessage } from '@/utils/apiErrors'
 
 const MAX_FILE_SIZE = 2000000 // 2 MB
 const MAX_UPDATE_COUNT = 3
@@ -96,12 +96,14 @@ const FormResumeUpload = (props: Props) => {
         }
       },
       onError: (err) => {
+        const fallbackMessage = 'Oops, something went wrong. Please try again later.'
+        const status = (err as { apiError?: { status?: number } })?.apiError?.status
         setToast({
           type: 'error',
           message:
-            (err as APIError).apiError.status == 400
+            status === 400
               ? 'Bad Request. Please review your resume and try again later.'
-              : 'Oops, something went wrong. Please try again later.',
+              : getApiErrorMessage(err, fallbackMessage),
           autoHide: false,
         })
       },

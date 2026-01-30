@@ -9,6 +9,8 @@ export const base = createTheme({
     mode: 'dark',
     primary: {
       main: '#90caf9',
+      light: '#b3e5fc',
+      dark: '#5d99c6',
     },
     secondary: {
       main: '#e9e9e9',
@@ -31,8 +33,8 @@ export const base = createTheme({
       disabled: 'rgba(255, 255, 255, 0.4)',
     },
     background: {
-      default: '#181818',
-      paper: '#121212',
+      default: 'hsl(222, 47%, 5%)',
+      paper: 'hsl(222, 40%, 8%)',
     },
     divider: 'rgba(255, 255, 255, 0.1)',
     common: {
@@ -67,7 +69,7 @@ export const base = createTheme({
 
 const typography = createTheme({
   typography: {
-    fontFamily: poppins.style.fontFamily,
+    fontFamily: `${poppins.style.fontFamily}, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif`,
     fontSize: 14,
     htmlFontSize: 16,
     fontWeightLight: 300,
@@ -76,27 +78,24 @@ const typography = createTheme({
     fontWeightBold: 700,
     h1: {
       color: base.palette.text.primary,
-      textAlign: 'center',
-      marginBottom: '2rem',
       fontSize: '2rem',
-      [base.breakpoints.up('md')]: {
-        fontSize: '3rem',
+      fontWeight: 600,
+      letterSpacing: '-0.02em',
+      '@media (min-width:900px)': {
+        fontSize: '2.5rem',
       },
-      [base.breakpoints.up('lg')]: {
-        marginBottom: '3rem',
-        fontSize: '4.5rem',
-      },
-      fontWeight: 700,
     },
     h2: {
       color: base.palette.text.primary,
-      fontSize: '1.5rem',
+      fontSize: '1.25rem',
       fontWeight: 600,
+      letterSpacing: '-0.01em',
     },
     h3: {
       color: base.palette.text.primary,
       fontSize: '1rem',
       fontWeight: 500,
+      letterSpacing: '-0.005em',
     },
     subtitle1: {
       marginBottom: '1rem',
@@ -106,15 +105,22 @@ const typography = createTheme({
     },
     body1: {
       color: base.palette.text.secondary,
+      fontSize: '0.9375rem',
+      lineHeight: 1.6,
+      letterSpacing: '0.01em',
     },
     body2: {
-      color: base.palette.text.secondary,
+      color: 'rgba(255, 255, 255, 0.7)',
+      fontSize: '0.875rem',
+      lineHeight: 1.5,
     },
     caption: {
       color: base.palette.text.secondary,
     },
     button: {
+      fontWeight: 500,
       textTransform: 'none',
+      letterSpacing: '0.02em',
     },
   },
 }).typography
@@ -336,6 +342,17 @@ const theme = createTheme(base, {
       styleOverrides: {
         root: {
           height: '100%',
+          background: 'rgba(30, 30, 35, 0.6)',
+          backdropFilter: 'blur(20px)',
+          WebkitBackdropFilter: 'blur(20px)',
+          border: '1px solid rgba(255, 255, 255, 0.08)',
+          borderRadius: '16px',
+          transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+          '&:hover': {
+            border: '1px solid rgba(255, 255, 255, 0.15)',
+            transform: 'translateY(-2px)',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
+          },
         },
       },
     },
@@ -349,13 +366,14 @@ const theme = createTheme(base, {
     MuiCardContent: {
       styleOverrides: {
         root: {
+          height: '100%',
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'space-between',
           gap: '1rem',
-          height: '100%',
+          padding: '1.5rem',
           '&:last-child': {
-            paddingBottom: 16,
+            paddingBottom: '1.5rem',
           },
         },
       },
@@ -363,6 +381,20 @@ const theme = createTheme(base, {
     MuiTextField: {
       defaultProps: {
         fullWidth: true,
+      },
+      styleOverrides: {
+        root: {
+          '& .MuiOutlinedInput-root': {
+            backgroundColor: 'rgba(255, 255, 255, 0.03)',
+            borderRadius: '12px',
+            '&:hover': {
+              backgroundColor: 'rgba(255, 255, 255, 0.05)',
+            },
+            '&.Mui-focused': {
+              backgroundColor: 'rgba(255, 255, 255, 0.05)',
+            },
+          },
+        },
       },
     },
     MuiInputBase: {

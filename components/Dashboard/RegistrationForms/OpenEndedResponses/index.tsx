@@ -18,22 +18,23 @@ const OpenEndedResponsesForm = (props: Props) => {
   const {
     control,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = form
 
   return (
     <form noValidate onSubmit={handleSubmit(onNext)}>
       <Grid container direction="column" gap="2.5rem">
         <Grid container direction="column" gap="1.5rem">
-          <Typography variant="h2">DeerHacks Pitch</Typography>
+          <Typography variant="h2">What do you hope to do at DeerHacks?</Typography>
           <Controller
             name="deerhacks_pitch"
             control={control}
             render={({ field: { ref, ...field } }) => (
               <FormTextArea
-                label="Why do you want to take part in DeerHacks?"
+                label="Your answer (150 words max)"
                 errors={errors}
                 inputRef={ref}
+                maxLength={1000}
                 {...field}
               />
             )}
@@ -41,38 +42,68 @@ const OpenEndedResponsesForm = (props: Props) => {
         </Grid>
 
         <Grid container direction="column" gap="1.5rem">
-          <Typography variant="h2">Past Project</Typography>
+          <Typography variant="h2">What would make you a valuable teammate?</Typography>
+          <Typography variant="h3" color="text.secondary" gutterBottom>
+            Technical skills, collaborative skills, etc. are all welcome
+          </Typography>
           <Controller
             name="shared_project"
             control={control}
             render={({ field: { ref, ...field } }) => (
               <FormTextArea
-                label="Share a project or initiative you've worked on that you're particularly proud of. What was your role, and what impact did it have?"
+                label="Your answer (150 words max)"
                 errors={errors}
                 inputRef={ref}
-                {...field}
-              />
-            )}
-          />{' '}
-        </Grid>
-
-        <Grid container direction="column" gap="1.5rem">
-          <Typography variant="h2">Future Technology</Typography>
-          <Controller
-            name="future_tech"
-            control={control}
-            render={({ field: { ref, ...field } }) => (
-              <FormTextArea
-                label="In your opinion, what is the most exciting or groundbreaking technology trend right now, and how might it impact our daily lives in the future?"
-                errors={errors}
-                inputRef={ref}
+                maxLength={1000}
                 {...field}
               />
             )}
           />
         </Grid>
 
-        <Button type="submit">Next</Button>
+        <Grid container direction="column" gap="1.5rem">
+          <Typography variant="h2">What type of project would you like to work on in the near future?</Typography>
+          <Typography variant="h3" color="text.secondary" gutterBottom>
+            How would you approach making it come to life?
+          </Typography>
+          <Controller
+            name="future_tech"
+            control={control}
+            render={({ field: { ref, ...field } }) => (
+              <FormTextArea
+                label="Your answer (150 words max)"
+                errors={errors}
+                inputRef={ref}
+                maxLength={1000}
+                {...field}
+              />
+            )}
+          />
+        </Grid>
+
+        <Grid container direction="column" gap="1.5rem">
+          <Typography variant="h2">Dream Project Pitch</Typography>
+          <Typography variant="h3" color="text.secondary" gutterBottom>
+            Given no limits on tech, time, money, scale, etc, pitch a project idea.
+          </Typography>
+          <Controller
+            name="project_pitch"
+            control={control}
+            render={({ field: { ref, ...field } }) => (
+              <FormTextArea
+                label="Your pitch (25 words max)"
+                errors={errors}
+                inputRef={ref}
+                maxLength={200}
+                {...field}
+              />
+            )}
+          />
+        </Grid>
+
+        <Button type="submit" disabled={isSubmitting}>
+          Next
+        </Button>
       </Grid>
     </form>
   )

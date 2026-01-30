@@ -6,70 +6,81 @@ import { Planet } from '@/types/Application'
 
 type ArchetypeDetail = {
   emoji: string
-  title: string
-  description: string
+  role: string
+  archetype: string
+  cosmicMessage: string
 }
 
-const archetypeDetails: { [key: string]: ArchetypeDetail } = {
-  Venus: {
-    emoji: '\u2601',
-    title: 'The Designer',
-    description:
-      'You have an eye for beauty and user experience. Your projects stand out because you care about how things look and feel, not just how they work.',
-  },
-  Neptune: {
-    emoji: '\uD83C\uDF0A',
-    title: 'The Dreamer',
-    description:
-      'You see possibilities others miss. Your intuition and creativity lead to innovative solutions that surprise everyone.',
-  },
+const archetypeDetails: Record<Planet, ArchetypeDetail> = {
   Earth: {
-    emoji: '\uD83C\uDF0D',
-    title: 'The Builder',
-    description:
-      'Practical and reliable, you turn ideas into reality. Your grounded approach ensures projects actually get finished and work properly.',
-  },
-  Saturn: {
-    emoji: '\uD83D\uDD2E',
-    title: 'The Strategist',
-    description:
-      'Methodical and disciplined, you excel at planning and execution. Nothing escapes your systematic approach to debugging and problem-solving.',
-  },
-  Jupiter: {
-    emoji: '\uD83C\uDF00',
-    title: 'The Visionary',
-    description:
-      'You dream big and inspire others to reach for the stars. Your optimism and ambition push projects to be more than just functional.',
-  },
-  Uranus: {
-    emoji: '\u2744',
-    title: 'The Innovator',
-    description:
-      'You push boundaries and embrace the cutting edge. Convention is just a starting point for your revolutionary ideas and technical experiments.',
-  },
-  Sun: {
-    emoji: '\uD83C\uDF1E',
-    title: 'The Leader',
-    description:
-      'Natural charisma and confidence make you a born leader. You light up any team and inspire peak performance from everyone around you.',
-  },
-  Mercury: {
-    emoji: '\uD83D\uDCA8',
-    title: 'The Communicator',
-    description:
-      'Quick-witted and adaptable, you excel at explaining complex ideas and pitching projects. Information flows through you effortlessly.',
+    emoji: '🌍',
+    role: 'The Builder',
+    archetype: 'The Engineer',
+    cosmicMessage:
+      'You turn concepts into reality. Your work gives structure and stability to every project and keeps ideas grounded in what truly works.',
   },
   Mars: {
-    emoji: '\uD83D\uDD25',
-    title: 'The Warrior',
-    description:
-      'Driven and determined, you tackle challenges head-on. Your energy and persistence are unstoppable forces that push through any obstacle.',
+    emoji: '🔥',
+    role: 'The Warrior',
+    archetype: 'The Speedrunner',
+    cosmicMessage:
+      'You thrive when the pressure is on. Tight deadlines and big obstacles fuel your momentum and push the team forward.',
+  },
+  Venus: {
+    emoji: '☁️',
+    role: 'The Designer',
+    archetype: 'The Visionary',
+    cosmicMessage:
+      'You shape how ideas look and feel. Your creativity turns functional projects into experiences people remember.',
+  },
+  Mercury: {
+    emoji: '💨',
+    role: 'The Messenger',
+    archetype: 'The Strategist',
+    cosmicMessage:
+      'You keep teams connected and ideas clear. Your communication turns scattered thoughts into strong plans and compelling stories.',
+  },
+  Jupiter: {
+    emoji: '🌀',
+    role: 'The Innovator',
+    archetype: 'The Architect',
+    cosmicMessage:
+      'You see beyond the immediate problem. Your vision helps teams design systems that scale and ideas that last.',
+  },
+  Saturn: {
+    emoji: '🔮',
+    role: 'The Debugger',
+    archetype: 'The Scientist',
+    cosmicMessage:
+      'You bring order to complexity. When things break, you stay focused and methodical until everything runs smoothly again.',
+  },
+  Neptune: {
+    emoji: '🌊',
+    role: 'The Dreamer',
+    archetype: 'The Creator',
+    cosmicMessage:
+      'You imagine what does not yet exist. Your ideas spark innovation and inspire teams to explore new directions.',
+  },
+  Uranus: {
+    emoji: '❄️',
+    role: 'The Rebel',
+    archetype: 'The Outlier',
+    cosmicMessage:
+      'You challenge norms and push boundaries, finding the most unconventional ideas and tech. Your curiosity leads to surprising discoveries and bold breakthroughs.',
   },
   Moon: {
-    emoji: '\uD83C\uDF13',
-    title: 'The Nurturer',
-    description:
-      'Empathetic and supportive, you bring emotional intelligence to your team. You help everyone feel valued and keep morale high.',
+    emoji: '🌓',
+    role: 'The Supporter',
+    archetype: 'The Backbone',
+    cosmicMessage:
+      'You hold everything together. By adapting to every phase and requirement, you keep projects alive through constant motion.',
+  },
+  Sun: {
+    emoji: '🌞',
+    role: 'The Leader',
+    archetype: 'The Captain',
+    cosmicMessage:
+      'You are the core of your team. When things get intense, others look to you for direction. Your energy brings people together and powers the mission forward.',
   },
 }
 
@@ -93,13 +104,15 @@ const ArchetypeResult = ({ archetype }: Props) => {
           {details.emoji}
         </Typography>
         <Typography variant="h2" color="primary" gutterBottom>
-          You are {archetype}
+          {archetype} Hacker
         </Typography>
         <Typography variant="h3" gutterBottom>
-          {details.title}
+          {details.role} — {details.archetype}
         </Typography>
-        <div style={{ maxWidth: 500, margin: '16px auto 0' }}>
-          <Typography color="text.secondary">{details.description}</Typography>
+        <div style={{ maxWidth: 600, margin: '16px auto 0' }}>
+          <Typography color="text.secondary" sx={{ fontStyle: 'italic' }}>
+            {details.cosmicMessage}
+          </Typography>
         </div>
       </CardContent>
     </Card>

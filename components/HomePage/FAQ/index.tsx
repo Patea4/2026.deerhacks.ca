@@ -15,7 +15,7 @@ import { useFeatureToggle } from '@/contexts/FeatureToggle'
 const FAQ = () => {
   const [openCount, setOpenCount] = useState(1)
 
-  const handleChange = ({}, isExpanded: boolean) => {
+  const handleChange = ({ }, isExpanded: boolean) => {
     setOpenCount((prev) => (isExpanded ? prev + 1 : prev - 1))
   }
 
@@ -51,12 +51,12 @@ const FAQ = () => {
             </AccordionSummary>
             <AccordionDetails>
               <Typography>
-                DeerHacks takes place on the weekend of February 14 - 16, 2025.
+                DeerHacks takes place on the weekend of February 27 - March 1, 2026.
                 {toggles.signupHacker
-                  ? ' Hacker applications are open until January 31, 2025.'
+                  ? ' Hacker applications are open until February 20, 2026.'
                   : ' Thanks for applying to DeerHacks! We will review your applications and get back to you soon.'}
                 {toggles.signupVolunteer && toggles.signupMentor
-                  ? ' Volunteer & mentor applications are open until February 2, 2024.'
+                  ? ' Volunteer & mentor applications are open until February 15, 2026.'
                   : ''}{' '}
                 Keep an eye on this page and our socials (@deerhacks) for any updates.
               </Typography>

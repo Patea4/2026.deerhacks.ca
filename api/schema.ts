@@ -65,7 +65,7 @@ const events = (customFetch: CustomFetch) =>
     eventList: async () => {
       const res = await customFetch(
         'GET',
-        'DH_CMS',
+        'DH_BE',
         '/events?pagination[page]=1&pagination[pageSize]=100&sort[0]=StartTime&sort[1]=Important:desc&sort[2]=EndTime:desc&sort[3]=Title'
       )
       return res.data as EventListResp

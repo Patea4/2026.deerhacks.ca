@@ -1,6 +1,6 @@
 import NextLink from 'next/link'
 
-import { Calendar, MapPin, Users } from 'lucide-react'
+import { Calendar, MapPin, Users, Sparkles } from 'lucide-react'
 
 import { useFeatureToggle } from '@/contexts/FeatureToggle'
 
@@ -19,52 +19,83 @@ const HeroSection = () => {
   const secondaryClassName = getButtonClassName('constellation', 'xl')
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
+    <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-16 pb-8">
+      {/* Background gradients */}
       <div className="absolute inset-0 z-0" style={{ background: 'var(--gradient-hero)' }} />
 
-      <div className="absolute inset-0 z-0 opacity-30">
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-space-nebula/20 rounded-full blur-[100px]" />
-        <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-primary/10 rounded-full blur-[80px]" />
+      {/* Nebula effects */}
+      <div className="absolute inset-0 z-0 overflow-hidden">
+        <div className="absolute top-[10%] left-[10%] w-[600px] h-[600px] bg-space-nebula/25 rounded-full blur-[150px] animate-pulse-slow" />
+        <div className="absolute bottom-[20%] right-[5%] w-[500px] h-[500px] bg-primary/15 rounded-full blur-[120px] animate-pulse-slow" style={{ animationDelay: '2s' }} />
+        <div className="absolute top-[60%] left-[50%] w-[300px] h-[300px] bg-accent/10 rounded-full blur-[100px] animate-pulse-slow" style={{ animationDelay: '4s' }} />
       </div>
 
       <div className="container mx-auto px-4 sm:px-6 relative z-10">
         <div className="flex flex-col items-center text-center max-w-4xl mx-auto">
-          <div className="mb-8 opacity-0 animate-fade-in" style={{ animationDelay: '0.2s' }}>
+          {/* Deer Constellation - Made more prominent */}
+          <div
+            className="mb-6 sm:mb-10 opacity-0 animate-fade-in relative"
+            style={{ animationDelay: '0.2s' }}
+          >
+            {/* Glow effect behind constellation */}
+            <div className="absolute inset-0 bg-primary/20 rounded-full blur-[60px] scale-150" />
             <DeerConstellation />
           </div>
 
+          {/* Event badge */}
+          <div
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/30 mb-6 opacity-0 animate-fade-in"
+            style={{ animationDelay: '0.3s' }}
+          >
+            <Sparkles className="w-4 h-4 text-primary" />
+            <span className="text-sm font-medium text-primary">February 27 - March 1, 2026</span>
+          </div>
+
           <h1
-            className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-display font-bold mb-6 opacity-0 animate-fade-in-up"
+            className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-display font-bold mb-4 opacity-0 animate-fade-in-up"
             style={{ animationDelay: '0.4s' }}
           >
             <span className="text-gradient">DeerHacks</span>
-            <span className="block text-foreground mt-2">2026</span>
           </h1>
 
           <p
-            className="text-lg sm:text-xl md:text-2xl text-muted-foreground mb-8 max-w-2xl opacity-0 animate-fade-in-up"
-            style={{ animationDelay: '0.6s' }}
+            className="text-xl sm:text-2xl md:text-3xl font-display font-light text-foreground/90 mb-6 opacity-0 animate-fade-in-up tracking-wide"
+            style={{ animationDelay: '0.5s' }}
           >
-            Explore the universe of possibilities. Build something extraordinary.
+            UTM&apos;s Premier Hackathon
           </p>
 
-          <div
-            className="flex flex-wrap justify-center gap-6 mb-10 opacity-0 animate-fade-in-up"
-            style={{ animationDelay: '0.8s' }}
+          <p
+            className="text-base sm:text-lg md:text-xl text-muted-foreground mb-8 max-w-2xl opacity-0 animate-fade-in-up leading-relaxed"
+            style={{ animationDelay: '0.6s' }}
           >
-            <div className="flex items-center gap-2 text-muted-foreground">
-              <MapPin className="w-5 h-5 text-primary" />
-              <span>University of Toronto</span>
+            Join 500+ innovators for 36 hours of building, learning, and creating.
+            Explore the universe of possibilities.
+          </p>
+
+          {/* Event details */}
+          <div
+            className="flex flex-wrap justify-center gap-4 sm:gap-8 mb-10 opacity-0 animate-fade-in-up"
+            style={{ animationDelay: '0.7s' }}
+          >
+            <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-secondary/50 border border-border/50">
+              <MapPin className="w-4 h-4 text-primary" />
+              <span className="text-sm text-foreground">University of Toronto Mississauga</span>
             </div>
-            <div className="flex items-center gap-2 text-muted-foreground">
-              <Users className="w-5 h-5 text-primary" />
-              <span>500+ Hackers</span>
+            <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-secondary/50 border border-border/50">
+              <Calendar className="w-4 h-4 text-primary" />
+              <span className="text-sm text-foreground">36 Hours</span>
+            </div>
+            <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-secondary/50 border border-border/50">
+              <Users className="w-4 h-4 text-primary" />
+              <span className="text-sm text-foreground">500+ Hackers</span>
             </div>
           </div>
 
+          {/* CTA buttons */}
           <div
             className="flex flex-col sm:flex-row gap-4 opacity-0 animate-fade-in-up"
-            style={{ animationDelay: '1s' }}
+            style={{ animationDelay: '0.9s' }}
           >
             {applyEnabled ? (
               <NextLink href="/login" className={`${applyClassName} no-underline`}>
@@ -82,13 +113,16 @@ const HeroSection = () => {
         </div>
       </div>
 
+      {/* Scroll indicator */}
       <div
         className="absolute bottom-8 left-1/2 -translate-x-1/2 opacity-0 animate-fade-in"
         style={{ animationDelay: '1.5s' }}
       >
-        <div className="w-6 h-10 border-2 border-muted-foreground/50 rounded-full flex justify-center">
-          <div className="w-1.5 h-3 bg-primary rounded-full mt-2 animate-bounce" />
-        </div>
+        <a href="#about" className="block group" aria-label="Scroll to learn more">
+          <div className="w-6 h-10 border-2 border-muted-foreground/40 group-hover:border-primary/60 rounded-full flex justify-center transition-colors">
+            <div className="w-1.5 h-3 bg-primary rounded-full mt-2 animate-bounce" />
+          </div>
+        </a>
       </div>
     </section>
   )

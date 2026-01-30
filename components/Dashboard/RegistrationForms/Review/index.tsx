@@ -5,13 +5,13 @@ import DoDisturbIcon from '@mui/icons-material/DoDisturb'
 import DownloadRoundedIcon from '@mui/icons-material/DownloadRounded'
 import InfoIcon from '@mui/icons-material/Info'
 import Box from '@mui/material/Box'
-import Button from '@mui/material/Button'
 import Grid from '@mui/material/Grid'
 import Link from '@mui/material/Link'
 import Tooltip from '@mui/material/Tooltip'
 import Typography from '@mui/material/Typography'
 
 import ArchetypeResult from '@/components/Dashboard/RegistrationForms/Archetype/ArchetypeResult'
+import LoadingButton from '@/components/Dashboard/LoadingButton'
 import { Application, OTHER_SPECIFY, Planet } from '@/types/Application'
 import { User } from '@/types/User'
 
@@ -20,10 +20,11 @@ type Props = {
   application: Application
   onSubmit?: () => void
   hideDisclaimer?: boolean
+  isSubmitting?: boolean
 }
 
 const FormReview = (props: Props) => {
-  const { user, application, onSubmit, hideDisclaimer = false } = props
+  const { user, application, onSubmit, hideDisclaimer = false, isSubmitting = false } = props
 
   return (
     <Grid container direction="column" gap="2.5rem">
@@ -36,46 +37,13 @@ const FormReview = (props: Props) => {
         )}
         <FieldReview name="Name" value={user.first_name + ' ' + user.last_name} />
         <FieldReview name="Email" value={user.email} />
-        <FieldReview name="Phone Number" value={application.phone_number} />
         <br />
         <FieldReview name="Age" value={application.age.toString()} />
         <FieldReview name="Gender" value={application.gender} />
-        <FieldReview name="Pronoun" value={application.pronoun} />
-        <FieldReview name="Ethnic Origins" value={formatList(application.ethnicity)} isList />
-        <br />
-        <FieldReview
-          name="Address"
-          value={
-            application.province
-              ? `${application.city} ${application.province}, ${application.country}`
-              : `${application.city}, ${application.country}`
-          }
-        />
-        <br />
-        <FieldReview name="Emergency Contact Name" value={application.emergency_name} />
-        <FieldReview
-          name="Emergency Contact Number"
-          value={application.emergency_number.toString()}
-        />
-        <FieldReview
-          name="Emergency Contact Relationship"
-          value={application.emergency_relationship}
-        />
-        <br />
-        <FieldReview name="Shirt Size" value={application.shirt_size} />
-        <FieldReview
-          name="Dietary Restrictions"
-          value={formatList(application.diet_restriction)}
-          isList
-        />
-        {application.additional_info && (
-          <FieldReview name="Additional Accommodations" value={application.additional_info} />
-        )}
       </Grid>
 
       <Grid container direction="column" gap="1.25rem">
         <Typography variant="h2">Experience</Typography>
-        <FieldReview name="Education" value={application.education} />
         <FieldReview name="School" value={application.school} />
         <FieldReview name="Program" value={application.program} />
         <br />
@@ -103,28 +71,6 @@ const FormReview = (props: Props) => {
             </Link>
           }
         />
-        {application.portfolio && (
-          <FieldReview
-            name="Personal Website / Portfolio"
-            valueNode={
-              <Link
-                href={application.portfolio}
-                rel="noopener"
-                target="_blank"
-                color="text.primary"
-                sx={{
-                  opacity: 1,
-                  fontWeight: 500,
-                  '&:hover': {
-                    textDecoration: 'underline',
-                  },
-                }}
-              >
-                {application.portfolio}
-              </Link>
-            }
-          />
-        )}
         {application.github && (
           <FieldReview
             name="GitHub"
@@ -174,12 +120,10 @@ const FormReview = (props: Props) => {
           name="Number of Hackathons Attended"
           value={application.hackathon_experience}
         />
-        <FieldReview
-          name="Previous DeerHacks Attendance"
-          value={formatList(application.deerhacks_experience)}
-          isList
+        <CheckBoxReview
+          name="Previous DeerHacks Attender"
+          value={application.previous_deerhacks_attender}
         />
-        <FieldReview name="Team Preferences" value={application.team_preference} />
         <FieldReview name="Topics of Interest" value={formatList(application.interests)} isList />
       </Grid>
 
@@ -197,6 +141,10 @@ const FormReview = (props: Props) => {
           name="In your opinion, what is the most exciting or groundbreaking technology trend right now, and how might it impact our daily lives in the future?"
           value={application.future_tech}
         />
+        <FieldReview
+          name="Describe a project you would love to build at this hackathon in 25 words or less."
+          value={application.project_pitch}
+        />
       </Grid>
 
       <Grid container direction="column" gap="1.25rem">
@@ -205,8 +153,13 @@ const FormReview = (props: Props) => {
           name="Where Did You First Hear About DeerHacks?"
           value={application.deerhacks_reach}
         />
-        <br />
+        <FieldReview
+          name="Dietary Restrictions"
+          value={formatList(application.diet_restriction)}
+          isList
+        />
         <FieldReview name="Meals" value={getMeals(application)} isList />
+        <CheckBoxReview name="Fasting" value={application.is_fasting} />
       </Grid>
 
       {application.archetype && (
@@ -216,7 +169,11 @@ const FormReview = (props: Props) => {
         </Grid>
       )}
 
-      {onSubmit && <Button onClick={onSubmit}>Submit Application</Button>}
+      {onSubmit && (
+        <LoadingButton loading={isSubmitting} onClick={onSubmit}>
+          Submit Application
+        </LoadingButton>
+      )}
     </Grid>
   )
 }

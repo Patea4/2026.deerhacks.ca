@@ -14,6 +14,7 @@ import LoadingButton from '@/components/Dashboard/LoadingButton'
 import { useUserUpdate } from '@/hooks/User/useUserUpdate'
 import { User } from '@/types/User'
 import { emailField } from '@/types/Zod'
+import { getApiErrorMessage } from '@/utils/apiErrors'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { infer as Infer, object } from 'zod'
 
@@ -31,7 +32,7 @@ type Props = {
 const EmailUpdate = (props: Props) => {
   const { show, user, onSuccess } = props
 
-  const [showAlert, setShowAlert] = useState(false)
+  const [alertMessage, setAlertMessage] = useState('')
 
   const {
     control,
@@ -47,14 +48,14 @@ const EmailUpdate = (props: Props) => {
 
   const { isLoading, mutate: userUpdate } = useUserUpdate()
   const onSubmit = (data: Form) => {
-    setShowAlert(false)
+    setAlertMessage('')
     userUpdate(data, {
       onSuccess,
       onError: (err) => {
         if ((err as APIError).apiError.status == 409) {
           setError('email', { type: '409', message: 'This email is already in use' })
         } else {
-          setShowAlert(true)
+          setAlertMessage(getApiErrorMessage(err, 'Something went wrong, try again later.'))
         }
       },
     })
@@ -72,8 +73,8 @@ const EmailUpdate = (props: Props) => {
       <DialogContent>
         <form noValidate onSubmit={handleSubmit(onSubmit)}>
           <Box component="div" display="flex" flexDirection="column" gap="1.5rem">
-            <Collapse in={showAlert}>
-              <Alert severity="error">Something went wrong, try again later.</Alert>
+            <Collapse in={!!alertMessage}>
+              <Alert severity="error">{alertMessage}</Alert>
             </Collapse>
             <Box component="div" display="flex" flexDirection="row" gap="1rem">
               <Controller

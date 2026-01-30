@@ -26,7 +26,7 @@ export default function Document() {
         <meta property="twitter:image" content="/backgrounds/collage_close.jpg" />
         <meta name="twitter:card" content="summary_large_image" />
 
-        <link rel="icon" type="image/svg+xml" sizes="512x512" href="/logo.svg" />
+        <link rel="icon" type="image/png" sizes="512x512" href="/icons/512.png" />
         <link rel="apple-touch-icon" href="/icons/apple.png" />
         <link rel="shortcut icon" href="/favicon.ico" />
         <link rel="manifest" href="/manifest.json" />

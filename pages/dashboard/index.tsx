@@ -19,6 +19,7 @@ import TileStatus from '@/components/Dashboard/TileStatus'
 import TileUser from '@/components/Dashboard/TileUser'
 import TileUsersTable from '@/components/Dashboard/TileUsersTable'
 import TileVolunteerForm from '@/components/Dashboard/TileVolunteerForm'
+import Starfield from '@/components/Celestial/Starfield'
 import FullPageSpinner from '@/components/Shared/FullPageSpinner'
 import Navbar from '@/components/Shared/Navbar'
 import { useAuth } from '@/contexts/Auth'
@@ -62,106 +63,128 @@ const Dashboard = () => {
         <FullPageSpinner />
       ) : (
         <Fade in timeout={1000}>
-          <Container
-            sx={{ minHeight: '100vh', flexDirection: 'column', justifyContent: 'space-between' }}
-          >
-            <Navbar />
-            <Box component="div" display="flex" flexDirection="column" gap="1rem" width="100%">
-              <TileUser user={user} archetype={archetype} />
-              {alertMessage && showAlert && (
-                <Alert
-                  severity="info"
-                  sx={{
-                    width: '100%',
-                    my: '1rem',
-                    boxShadow: 'inset 0 0 5px 100px rgb(0 0 0 / 30%)',
-                    backdropFilter: 'blur(10px)',
-                  }}
-                >
-                  {alertMessage}
-                </Alert>
-              )}
-              {(showMentorForm || showVolunteerForm) &&
-                !['guest', 'volunteer', 'attended'].includes(user.status) && (
-                  <Grid container spacing={2} py={4}>
-                    {showVolunteerForm && (
+          <Box component="main" sx={{ position: 'relative', minHeight: '100vh' }}>
+            <Starfield />
+            <Container
+              maxWidth="xl"
+              sx={{
+                minHeight: '100vh',
+                flexDirection: 'column',
+                justifyContent: 'space-between',
+                alignItems: 'stretch',
+                py: '2rem',
+                position: 'relative',
+                zIndex: 1,
+              }}
+            >
+              <Navbar />
+              <Box component="div" display="flex" flexDirection="column" gap="1rem" width="100%">
+                {toggles.applicationsPaused && (
+                  <Alert
+                    severity="warning"
+                    sx={{
+                      width: '100%',
+                      boxShadow: 'inset 0 0 5px 100px rgb(0 0 0 / 30%)',
+                      backdropFilter: 'blur(10px)',
+                    }}
+                  >
+                    Applications are temporarily paused while we review things. Please check back
+                    in a few moments.
+                  </Alert>
+                )}
+                <TileUser user={user} archetype={archetype} />
+                {alertMessage && showAlert && (
+                  <Alert
+                    severity="info"
+                    sx={{
+                      width: '100%',
+                      my: '1rem',
+                      boxShadow: 'inset 0 0 5px 100px rgb(0 0 0 / 30%)',
+                      backdropFilter: 'blur(10px)',
+                    }}
+                  >
+                    {alertMessage}
+                  </Alert>
+                )}
+                {(showMentorForm || showVolunteerForm) &&
+                  !['guest', 'volunteer', 'attended'].includes(user.status) && (
+                    <Grid container spacing={2} py={4}>
+                      {showVolunteerForm && (
+                        <Grid item xs={12} md>
+                          <TileVolunteerForm
+                            href={volunteerForm}
+                            disabled={['pending'].includes(user.status)}
+                          />
+                        </Grid>
+                      )}
+                      {showMentorForm && (
+                        <Grid item xs={12} md>
+                          <TileMentorForm
+                            href={mentorForm}
+                            disabled={['pending'].includes(user.status)}
+                          />
+                        </Grid>
+                      )}
+                    </Grid>
+                  )}
+                {['admin', 'moderator', 'volunteer'].includes(user.status) && (
+                  <Grid container spacing={2}>
+                    <Grid item xs={12} md>
+                      <TileScanner />
+                    </Grid>
+                    {user.status !== 'volunteer' && (
                       <Grid item xs={12} md>
-                        <TileVolunteerForm
-                          href={volunteerForm}
-                          disabled={['pending'].includes(user.status)}
-                        />
-                      </Grid>
-                    )}
-                    {showMentorForm && (
-                      <Grid item xs={12} md>
-                        <TileMentorForm
-                          href={mentorForm}
-                          disabled={['pending'].includes(user.status)}
-                        />
+                        <TileUsersTable />
                       </Grid>
                     )}
                   </Grid>
                 )}
-              {['admin', 'moderator', 'volunteer'].includes(user.status) && (
                 <Grid container spacing={2}>
-                  <Grid item xs={12} md>
-                    <TileScanner />
+                  <Grid item xs={12} md={7} lg={8} order={{ xs: 2, md: 1 }}>
+                    {['pending', 'registering'].includes(user.status) ? (
+                      <TileRegistration status={user.status} />
+                    ) : (
+                      <TileHackerPack status={user.status} />
+                    )}
                   </Grid>
-                  {user.status !== 'volunteer' && (
-                    <Grid item xs={12} md>
-                      <TileUsersTable />
+                  <Grid container item xs={12} md={5} lg={4} spacing={2} order={{ xs: 1, md: 2 }}>
+                    <Grid item xs={12}>
+                      <TileStatus status={user.status} />
                     </Grid>
-                  )}
-                </Grid>
-              )}
-              <Grid container spacing={2}>
-                <Grid item xs={12} md={7} lg={8} order={{ xs: 2, md: 1 }}>
-                  {['pending', 'registering'].includes(user.status) ? (
-                    <TileRegistration status={user.status} />
-                  ) : (
-                    <TileHackerPack status={user.status} />
-                  )}
-                </Grid>
-                <Grid container item xs={12} md={5} lg={4} spacing={2} order={{ xs: 1, md: 2 }}>
-                  <Grid item xs={12}>
-                    <TileStatus status={user.status} />
-                  </Grid>
-                  <Grid item xs={6}>
-                    <TileChecklist />
-                  </Grid>
-                  <Grid item xs={6}>
-                    <TileDevpost />
+                    <Grid item xs={6}>
+                      <TileChecklist />
+                    </Grid>
+                    <Grid item xs={6}>
+                      <TileDevpost />
+                    </Grid>
                   </Grid>
                 </Grid>
-              </Grid>
-              <Grid container spacing={2}>
-                {/* <Grid item xs={12} md={6} order={{ xs: 2, md: 1 }}>
-                  <TileGallery />
-                </Grid> */}
-                <Grid item xs={12} md={12} order={{ xs: 1, md: 2 }}>
-                  <TileSchedule status={user.status} />
-                </Grid>
-              </Grid>
-              <Grid container spacing={2}>
-                <Grid container item xs={12} md={5} lg={4} spacing={2} order={{ xs: 2, md: 1 }}>
-                  <Grid item xs={6}>
-                    <TileInstagram />
-                  </Grid>
-                  <Grid item xs={6}>
-                    <TileLinkedIn />
+                <Grid container spacing={2}>
+                  <Grid item xs={12} md={12} order={{ xs: 1, md: 2 }}>
+                    <TileSchedule status={user.status} />
                   </Grid>
                 </Grid>
-                <Grid item xs={12} md={7} lg={8} order={{ xs: 1, md: 2 }}>
-                  {['pending', 'registering'].includes(user.status) ? (
-                    <TileHackerPack status={user.status} />
-                  ) : (
-                    <TileRegistration status={user.status} />
-                  )}
+                <Grid container spacing={2}>
+                  <Grid container item xs={12} md={5} lg={4} spacing={2} order={{ xs: 2, md: 1 }}>
+                    <Grid item xs={6}>
+                      <TileInstagram />
+                    </Grid>
+                    <Grid item xs={6}>
+                      <TileLinkedIn />
+                    </Grid>
+                  </Grid>
+                  <Grid item xs={12} md={7} lg={8} order={{ xs: 1, md: 2 }}>
+                    {['pending', 'registering'].includes(user.status) ? (
+                      <TileHackerPack status={user.status} />
+                    ) : (
+                      <TileRegistration status={user.status} />
+                    )}
+                  </Grid>
                 </Grid>
-              </Grid>
-            </Box>
-            <span />
-          </Container>
+              </Box>
+              <span />
+            </Container>
+          </Box>
         </Fade>
       )}
     </>

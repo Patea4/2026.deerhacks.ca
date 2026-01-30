@@ -1,8 +1,11 @@
-import { Controller, UseFormReturn } from 'react-hook-form'
+import { Controller, FieldError, UseFormReturn } from 'react-hook-form'
 
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
+import FormControlLabel from '@mui/material/FormControlLabel'
 import Grid from '@mui/material/Grid'
+import Radio from '@mui/material/Radio'
+import RadioGroup from '@mui/material/RadioGroup'
 import Typography from '@mui/material/Typography'
 
 import FormCheckbox from '@/components/Dashboard/RegistrationForms/FormComponents/FormCheckbox'
@@ -12,15 +15,11 @@ import FormResumeUpload from '@/components/Dashboard/RegistrationForms/FormCompo
 import FormSelect from '@/components/Dashboard/RegistrationForms/FormComponents/FormSelect'
 import FormTextField from '@/components/Dashboard/RegistrationForms/FormComponents/FormTextField'
 import {
-  deerhacksExperienceOptions,
-  educationOptions,
   hackathonExperienceOptions,
   interestsOptions,
   OTHER_SPECIFY,
   programOptions,
   ResumeUpdateResp,
-  schoolOptions,
-  teamPreferenceOptions,
 } from '@/types/Application'
 import { ExperienceZodForm } from '@/types/Zod'
 
@@ -38,7 +37,7 @@ const ExperienceForm = (props: Props) => {
     watch,
     getValues,
     setValue,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = form
 
   return (
@@ -46,75 +45,18 @@ const ExperienceForm = (props: Props) => {
       <Grid container direction="column" gap="2.5rem">
         <Grid container direction="column" gap="1.5rem">
           <Typography variant="h2">Education</Typography>
-          <Typography variant="h3" color="text.secondary" gutterBottom>
-            📚 Taking notes, breaking hearts
-          </Typography>
-          <Box
-            component="div"
-            display="flex"
-            flexDirection={{ xs: 'column', sm: 'row' }}
-            gap="1rem"
-            width="100%"
-          >
-            <Controller
-              name="education"
-              control={control}
-              render={({ field: { ref, ...field } }) => (
-                <FormSelect
-                  label="Level of Study"
-                  options={educationOptions}
-                  errors={errors}
-                  inputRef={ref}
-                  {...field}
-                />
-              )}
-            />
-            {watch('education') == OTHER_SPECIFY && (
-              <Controller
-                name="education_other"
-                control={control}
-                render={({ field: { ref, ...field } }) => (
-                  <FormTextField label="Other" errors={errors} inputRef={ref} {...field} />
-                )}
+          <Controller
+            name="school"
+            control={control}
+            render={({ field: { ref, ...field } }) => (
+              <FormTextField
+                label="School (Please specify campus)"
+                errors={errors}
+                inputRef={ref}
+                {...field}
               />
             )}
-          </Box>
-          <Box
-            component="div"
-            display="flex"
-            flexDirection={{ xs: 'column', sm: 'row' }}
-            gap="1rem"
-          >
-            <Controller
-              name="school"
-              control={control}
-              render={({ field: { ref, ...field } }) => (
-                <FormDynamicSelect
-                  label="School (Last Attended)"
-                  options={schoolOptions}
-                  errors={errors}
-                  setOtherField={(val: string) => {
-                    setValue(
-                      'school_other',
-                      (schoolOptions as readonly string[]).includes(val) ? '' : val,
-                      { shouldValidate: true }
-                    )
-                  }}
-                  inputRef={ref}
-                  {...field}
-                />
-              )}
-            />
-            {watch('school') == OTHER_SPECIFY && (
-              <Controller
-                name="school_other"
-                control={control}
-                render={({ field: { ref, ...field } }) => (
-                  <FormTextField label="Other" errors={errors} inputRef={ref} {...field} />
-                )}
-              />
-            )}
-          </Box>
+          />
           <Box
             component="div"
             display="flex"
@@ -126,7 +68,7 @@ const ExperienceForm = (props: Props) => {
               control={control}
               render={({ field: { ref, ...field } }) => (
                 <FormDynamicSelect
-                  label="Program of Study"
+                  label="Program"
                   options={programOptions}
                   errors={errors}
                   setOtherField={(val: string) => {
@@ -154,67 +96,7 @@ const ExperienceForm = (props: Props) => {
         </Grid>
 
         <Grid container direction="column" gap="1.5rem">
-          <Typography variant="h2">Professional Journey</Typography>
-          <Typography variant="h3" color="text.secondary" gutterBottom>
-            🚀 Flex that Hello World python script
-          </Typography>
-          <FormResumeUpload
-            name={getValues('resume_file_name')}
-            link={getValues('resume_link')}
-            updateCount={getValues('resume_update_count')}
-            error={errors.resume_link}
-            onSuccess={(resp: ResumeUpdateResp) => {
-              setValue('resume_file_name', resp.resume_file_name, { shouldValidate: true })
-              setValue('resume_link', resp.resume_link, { shouldValidate: true })
-              setValue('resume_update_count', resp.resume_update_count, { shouldValidate: true })
-            }}
-          />
-          <Controller
-            name="resume_consent"
-            control={control}
-            render={({ field: { ref, ...field } }) => (
-              <FormCheckbox
-                label="I allow DeerHacks to distribute my resume to event sponsors."
-                errors={errors}
-                inputRef={ref}
-                {...field}
-              />
-            )}
-          />
-          <Controller
-            name="portfolio"
-            control={control}
-            render={({ field: { ref, ...field } }) => (
-              <FormTextField
-                label="Personal Website or Portfolio"
-                errors={errors}
-                optional
-                inputRef={ref}
-                {...field}
-              />
-            )}
-          />
-          <Controller
-            name="github"
-            control={control}
-            render={({ field: { ref, ...field } }) => (
-              <FormTextField label="GitHub" errors={errors} optional inputRef={ref} {...field} />
-            )}
-          />
-          <Controller
-            name="linkedin"
-            control={control}
-            render={({ field: { ref, ...field } }) => (
-              <FormTextField label="LinkedIn" errors={errors} optional inputRef={ref} {...field} />
-            )}
-          />
-        </Grid>
-
-        <Grid container direction="column" gap="1.5rem">
-          <Typography variant="h2">Hacker Details</Typography>
-          <Typography variant="h3" color="text.secondary" gutterBottom>
-            💻 Spill the code beans, what makes your circuits buzz
-          </Typography>
+          <Typography variant="h2">Hackathon Experience</Typography>
           <Controller
             name="hackathon_experience"
             control={control}
@@ -228,83 +110,104 @@ const ExperienceForm = (props: Props) => {
               />
             )}
           />
-          <Controller
-            name="deerhacks_experience"
-            control={control}
-            render={({ field: { ref, ...field } }) => (
-              <FormMultiSelect
-                label="Previous DeerHacks Attendance"
-                options={deerhacksExperienceOptions}
-                errors={errors}
-                inputRef={ref}
-                {...field}
-                onChange={(e) => {
-                  if (e.target.value.slice(-1) == deerhacksExperienceOptions[0]) {
-                    setValue('deerhacks_experience', [deerhacksExperienceOptions[0]], {
-                      shouldValidate: true,
-                      shouldDirty: true,
-                    })
-                  } else {
-                    field.onChange(e)
-                    setValue(
-                      'deerhacks_experience',
-                      getValues('deerhacks_experience')?.filter(
-                        (e) => e != deerhacksExperienceOptions[0]
-                      ),
-                      { shouldValidate: true }
-                    )
-                  }
-                }}
-              />
-            )}
-          />
-          <Controller
-            name="team_preference"
-            control={control}
-            render={({ field: { ref, ...field } }) => (
-              <FormSelect
-                label="Team Preferences"
-                options={teamPreferenceOptions}
-                errors={errors}
-                inputRef={ref}
-                {...field}
-              />
-            )}
-          />
-          <Box
-            component="div"
-            display="flex"
-            flexDirection={{ xs: 'column', sm: 'row' }}
-            maxWidth="100%"
-            gap="1rem"
-          >
+          <Box component="div">
+            <Typography gutterBottom>Previous DeerHacks Attender?</Typography>
             <Controller
-              name="interests"
+              name="previous_deerhacks_attender"
               control={control}
-              render={({ field: { ref, ...field } }) => (
-                <FormMultiSelect
-                  label="Topics of Interest (Choose up to 5)"
-                  options={interestsOptions}
-                  errors={errors}
-                  maxSelection={5}
-                  inputRef={ref}
-                  {...field}
-                />
+              render={({ field }) => (
+                <RadioGroup
+                  row
+                  value={field.value ? 'yes' : 'no'}
+                  onChange={(e) => field.onChange(e.target.value === 'yes')}
+                >
+                  <FormControlLabel value="yes" control={<Radio />} label="Yes" />
+                  <FormControlLabel value="no" control={<Radio />} label="No" />
+                </RadioGroup>
               )}
             />
-            {watch('interests')?.includes(OTHER_SPECIFY) && (
-              <Controller
-                name="interests_other"
-                control={control}
-                render={({ field: { ref, ...field } }) => (
-                  <FormTextField label="Other" errors={errors} inputRef={ref} {...field} />
-                )}
-              />
-            )}
           </Box>
         </Grid>
 
-        <Button type="submit">Next</Button>
+        <Grid container direction="column" gap="1.5rem">
+          <Typography variant="h2">Professional Links</Typography>
+          <Controller
+            name="github"
+            control={control}
+            render={({ field: { ref, ...field } }) => (
+              <FormTextField
+                label="Link to Github"
+                errors={errors}
+                optional
+                inputRef={ref}
+                {...field}
+              />
+            )}
+          />
+          <Controller
+            name="linkedin"
+            control={control}
+            render={({ field: { ref, ...field } }) => (
+              <FormTextField
+                label="Link to LinkedIn"
+                errors={errors}
+                optional
+                inputRef={ref}
+                {...field}
+              />
+            )}
+          />
+        </Grid>
+
+        <Grid container direction="column" gap="1.5rem">
+          <Typography variant="h2">Topics of Interest</Typography>
+          <Controller
+            name="interests"
+            control={control}
+            render={({ field: { ref, value, ...field } }) => (
+              <FormMultiSelect
+                label="Select all that apply"
+                options={interestsOptions}
+                errors={errors}
+                inputRef={ref}
+                value={value as readonly string[]}
+                {...field}
+              />
+            )}
+          />
+        </Grid>
+
+        <Grid container direction="column" gap="1.5rem">
+          <Typography variant="h2">Resume</Typography>
+          <FormResumeUpload
+            name={getValues('resume_file_name') as string}
+            link={getValues('resume_link') as string}
+            updateCount={getValues('resume_update_count') as number}
+            error={errors.resume_link as FieldError | undefined}
+            onSuccess={(resp: ResumeUpdateResp) => {
+              setValue('resume_file_name', resp.resume_file_name, { shouldValidate: true })
+              setValue('resume_link', resp.resume_link, { shouldValidate: true })
+              setValue('resume_update_count', resp.resume_update_count, { shouldValidate: true })
+            }}
+          />
+          <Controller
+            name="resume_consent"
+            control={control}
+            render={({ field: { ref, value, ...field } }) => (
+              <FormCheckbox
+                label="By uploading, you consent to sharing with third-parties such as sponsors"
+                errors={errors}
+                inputRef={ref}
+                value={value as boolean}
+                {...field}
+              />
+            )}
+          />
+        </Grid>
+
+        <Button type="submit" disabled={isSubmitting}>
+          Next
+        </Button>
       </Grid>
     </form>
   )

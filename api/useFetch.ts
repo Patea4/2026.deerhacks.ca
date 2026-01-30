@@ -56,7 +56,19 @@ const fetchHelper = async (props: Props): Promise<{ data: any; error: any; statu
 
   if (resp.status >= 400) {
     const error = await resp.text()
-    response.error.data = error ? JSON.parse(error) : {}
+    if (error) {
+      try {
+        response.error.data = JSON.parse(error)
+      } catch {
+        response.error.data = { message: error }
+      }
+    }
+    if (resp.status === 429 && !response.error.data?.message) {
+      response.error.data = {
+        ...(response.error.data || {}),
+        message: "We're busy right now, please try again in a few moments.",
+      }
+    }
     throw { status: resp.status, err: response.error.data }
   } else {
     const data = await resp.json()

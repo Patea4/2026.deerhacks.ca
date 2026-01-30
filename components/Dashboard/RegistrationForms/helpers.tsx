@@ -1,20 +1,15 @@
 import {
+  answerToPlanetMap,
   Application,
-  deerhacksExperienceOptions,
   deerhacksReachOptions,
   dietaryRestrictionsOptions,
-  educationOptions,
-  ethnicityOptions,
   genderOptions,
   hackathonExperienceOptions,
   interestsOptions,
   OTHER_SPECIFY,
+  Planet,
+  planetOptions,
   programOptions,
-  pronounOptions,
-  relationshipOptions,
-  schoolOptions,
-  shirtSizeOptions,
-  teamPreferenceOptions,
 } from '@/types/Application'
 import {
   AboutYouZodForm,
@@ -23,7 +18,6 @@ import {
   ExperienceZodForm,
   OpenEndedResponsesZodForm,
 } from '@/types/Zod'
-import { calculateArchetype } from '@/utils/archetypeCalculator'
 
 export const toDropdownType = <T extends any>(
   options: readonly T[],
@@ -47,102 +41,33 @@ export const toMultiSelectType = <T extends any>(
 }
 
 const appToAboutForm = (application: Application) => {
-  const gender = toDropdownType(genderOptions, application.gender)
-  const pronoun = toDropdownType(pronounOptions, application.pronoun)
-  const { options: ethnicity, other: ethnicity_other } = toMultiSelectType(
-    ethnicityOptions,
-    application.ethnicity
-  )
-  const emergency_relationship = toDropdownType(
-    relationshipOptions,
-    application.emergency_relationship
-  )
-  const { options: diet_restriction, other: diet_restriction_other } = toMultiSelectType(
-    dietaryRestrictionsOptions,
-    application.diet_restriction
-  )
-
   return {
-    // Personal Information
-    phone_number: application.phone_number,
-
-    // Set in first user update
-    is_subscribed: true,
-
-    // Profile Details
     age: application.age == 0 ? undefined : application.age.toString(),
-    gender,
-    ...(gender == OTHER_SPECIFY && { gender_other: application.gender }),
-    pronoun,
-    ...(pronoun == OTHER_SPECIFY && { pronoun_other: application.pronoun }),
-    ethnicity,
-    ethnicity_other,
-
-    // Location
-    city: application.city,
-    country: application.country,
-    province: application.province,
-
-    // Emergency Contact
-    emergency_name: application.emergency_name,
-    emergency_number: application.emergency_number,
-    emergency_relationship,
-    ...(emergency_relationship == OTHER_SPECIFY && {
-      emergency_relationship_other: application.emergency_relationship,
-    }),
-
-    // Event Preferences
-    ...(application.shirt_size && {
-      shirt_size: application.shirt_size as (typeof shirtSizeOptions)[number],
-    }),
-    diet_restriction,
-    diet_restriction_other,
-    additional_info: application.additional_info,
+    gender: application.gender as (typeof genderOptions)[number] | undefined,
   }
 }
 
 const appToExpForm = (application: Application) => {
-  const education = toDropdownType(educationOptions, application.education)
-  const school = toDropdownType(schoolOptions, application.school)
   const program = toDropdownType(programOptions, application.program)
   const hackathon_experience = toDropdownType(
     hackathonExperienceOptions,
     application.hackathon_experience
   )
-  const team_preference = toDropdownType(teamPreferenceOptions, application.team_preference)
-  const { options: interests, other: interests_other } = toMultiSelectType(
-    interestsOptions,
-    application.interests
-  )
-  const { options: deerhacks_experience } = toMultiSelectType(
-    deerhacksExperienceOptions,
-    application.deerhacks_experience
-  )
+  const { options: interests } = toMultiSelectType(interestsOptions, application.interests)
 
   return {
-    // Education
-    education,
-    ...(education == OTHER_SPECIFY && { education_other: application.education }),
-    school,
-    ...(school == OTHER_SPECIFY && { school_other: application.school }),
+    school: application.school,
     program,
     ...(program == OTHER_SPECIFY && { program_other: application.program }),
-
-    // Professional Journey
     resume_link: application.resume_link,
     resume_file_name: application.resume_file_name,
     resume_update_count: application.resume_update_count,
-    ...(application.portfolio && { portfolio: application.portfolio }),
+    resume_consent: application.resume_consent,
     ...(application.github && { github: application.github }),
     ...(application.linkedin && { linkedin: application.linkedin }),
-    resume_consent: application.resume_consent,
-
-    // Hacker Details
     hackathon_experience,
-    deerhacks_experience,
-    team_preference,
+    previous_deerhacks_attender: application.previous_deerhacks_attender,
     interests,
-    interests_other,
   }
 }
 
@@ -151,41 +76,31 @@ const appToOpenResponseForm = (application: Application) => {
     deerhacks_pitch: application.deerhacks_pitch,
     shared_project: application.shared_project,
     future_tech: application.future_tech,
+    project_pitch: application.project_pitch,
   }
 }
 
 const appToDeerHacksForm = (application: Application) => {
-  const deerhacks_reach = toDropdownType(deerhacksReachOptions, application.deerhacks_reach)
+  const { options: diet_restriction } = toMultiSelectType(
+    dietaryRestrictionsOptions,
+    application.diet_restriction
+  )
 
   return {
-    // Reach
-    deerhacks_reach,
-    ...(deerhacks_reach == OTHER_SPECIFY && {
-      deerhacks_reach_other: application.deerhacks_reach,
-    }),
-
-    // Meals
+    deerhacks_reach: application.deerhacks_reach as (typeof deerhacksReachOptions)[number] | undefined,
+    diet_restriction,
     day1_dinner: application.day1_dinner,
     day2_breakfast: application.day2_breakfast,
     day2_lunch: application.day2_lunch,
     day2_dinner: application.day2_dinner,
     day3_breakfast: application.day3_breakfast,
-
-    // MLH Permissions
-    mlh_authorize: application.mlh_authorize,
-    mlh_code_agreement: application.mlh_code_agreement,
-    mlh_subscribe: application.mlh_subscribe,
+    is_fasting: application.is_fasting,
   }
 }
 
 const appToArchetypeForm = (application: Application) => {
-  const answers = application.archetype_answers || []
   return {
-    archetype_q1: answers[0] || undefined,
-    archetype_q2: answers[1] || undefined,
-    archetype_q3: answers[2] || undefined,
-    archetype_q4: answers[3] || undefined,
-    archetype_q5: answers[4] || undefined,
+    archetype_answer: application.archetype_answer || undefined,
   }
 }
 
@@ -198,85 +113,27 @@ export const appToFormMap = {
 }
 
 const aboutFormToApp = (form: AboutYouZodForm, currApplication: Application) => {
-  const currEthnicity = [...currApplication.ethnicity] ?? []
-  const newEthnicity = form.ethnicity.includes(OTHER_SPECIFY)
-    ? (form.ethnicity as string[]).concat([form.ethnicity_other ?? ''])
-    : form.ethnicity
-  const ethnicity = currEthnicity.slice()
-  ethnicity.splice(0, currEthnicity.length, ...newEthnicity)
-
-  const currDiet = [...currApplication.diet_restriction] ?? []
-  const newDiet = form.diet_restriction.includes(OTHER_SPECIFY)
-    ? (form.diet_restriction as string[]).concat([form.diet_restriction_other ?? ''])
-    : form.diet_restriction
-  const diet_restriction = currDiet.slice()
-  diet_restriction.splice(0, currDiet.length, ...newDiet)
-
   return {
     ...currApplication,
-
-    // Personal Information
-    phone_number: form.phone_number,
-
-    // Set in first user update
-    is_subscribed: true,
-
-    // Profile Details
     age: parseInt(form.age),
-    gender: form.gender == OTHER_SPECIFY ? form.gender_other ?? '' : form.gender,
-    pronoun: form.pronoun == OTHER_SPECIFY ? form.pronoun_other ?? '' : form.pronoun,
-    ethnicity,
-
-    // Location
-    city: form.city,
-    country: form.country,
-    province: form.province,
-
-    // Emergency Contact
-    emergency_name: form.emergency_name,
-    emergency_number: form.emergency_number,
-    emergency_relationship:
-      form.emergency_relationship == OTHER_SPECIFY
-        ? form.emergency_relationship_other ?? ''
-        : form.emergency_relationship,
-
-    // Event Preferences
-    shirt_size: form.shirt_size,
-    diet_restriction,
-    additional_info: form.additional_info ?? '',
+    gender: form.gender,
   }
 }
 
 const expFormToApp = (form: ExperienceZodForm, currApplication: Application): Application => {
-  const currInterests = [...currApplication.interests] ?? []
-  const newInterests = form.interests.includes(OTHER_SPECIFY)
-    ? (form.interests as string[]).concat([form.interests_other ?? ''])
-    : form.interests
-  const interests = currInterests.slice()
-  interests.splice(0, currInterests.length, ...newInterests)
-
   return {
     ...currApplication,
-
-    // Education
-    resume_link: form.resume_link,
-    resume_file_name: form.resume_file_name,
-    resume_update_count: form.resume_update_count,
-    education: form.education == OTHER_SPECIFY ? form.education_other ?? '' : form.education,
-    school: form.school == OTHER_SPECIFY ? form.school_other ?? '' : form.school,
-    program: form.program == OTHER_SPECIFY ? form.program_other ?? '' : form.program,
-
-    // Professional Journey
-    portfolio: form.portfolio,
-    github: form.github,
-    linkedin: form.linkedin,
-    resume_consent: form.resume_consent,
-
-    // Hacker Details
-    hackathon_experience: form.hackathon_experience,
-    deerhacks_experience: form.deerhacks_experience,
-    team_preference: form.team_preference,
-    interests,
+    school: form.school as string,
+    program: form.program == OTHER_SPECIFY ? (form.program_other as string) ?? '' : (form.program as string),
+    resume_link: form.resume_link as string,
+    resume_file_name: form.resume_file_name as string,
+    resume_update_count: form.resume_update_count as number,
+    resume_consent: form.resume_consent as boolean,
+    github: (form.github as string) ?? '',
+    linkedin: (form.linkedin as string) ?? '',
+    hackathon_experience: form.hackathon_experience as (typeof hackathonExperienceOptions)[number],
+    previous_deerhacks_attender: form.previous_deerhacks_attender as boolean,
+    interests: form.interests as (typeof interestsOptions)[number][],
   }
 }
 
@@ -286,51 +143,47 @@ const openResponseFormToApp = (
 ): Application => {
   return {
     ...currApplication,
-
     deerhacks_pitch: form.deerhacks_pitch ?? '',
     shared_project: form.shared_project ?? '',
     future_tech: form.future_tech ?? '',
+    project_pitch: form.project_pitch ?? '',
   }
 }
 
 const deerhacksFormToApp = (form: DeerhacksZodForm, currApplication: Application): Application => {
   return {
     ...currApplication,
-
-    // Reach
-    deerhacks_reach:
-      form.deerhacks_reach == OTHER_SPECIFY
-        ? form.deerhacks_reach_other ?? ''
-        : form.deerhacks_reach,
-
-    // Meals
+    deerhacks_reach: form.deerhacks_reach,
+    diet_restriction: form.diet_restriction,
     day1_dinner: form.day1_dinner,
     day2_breakfast: form.day2_breakfast,
     day2_lunch: form.day2_lunch,
     day2_dinner: form.day2_dinner,
     day3_breakfast: form.day3_breakfast,
-
-    // MLH Permissions
-    // Hardcoded because no MLH this year!
-    mlh_authorize: true,
-    mlh_code_agreement: true,
-    mlh_subscribe: false,
+    is_fasting: form.is_fasting,
   }
 }
 
+const calculateArchetypeFromAnswer = (answer: string): { scores: Record<Planet, number>; archetype: Planet } => {
+  const scores = {} as Record<Planet, number>
+  planetOptions.forEach((planet) => {
+    scores[planet] = 0
+  })
+
+  const planet = answerToPlanetMap[answer]
+  if (planet) {
+    scores[planet] = 1
+  }
+
+  return { scores, archetype: planet || 'Earth' }
+}
+
 const archetypeFormToApp = (form: ArchetypeZodForm, currApplication: Application): Application => {
-  const answers = [
-    form.archetype_q1,
-    form.archetype_q2,
-    form.archetype_q3,
-    form.archetype_q4,
-    form.archetype_q5,
-  ]
-  const { scores, archetype } = calculateArchetype(answers)
+  const { scores, archetype } = calculateArchetypeFromAnswer(form.archetype_answer)
 
   return {
     ...currApplication,
-    archetype_answers: answers,
+    archetype_answer: form.archetype_answer,
     archetype_scores: scores,
     archetype,
   }

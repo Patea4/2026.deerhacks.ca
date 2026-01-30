@@ -34,6 +34,7 @@ type MenuProps = {
 const Menu = (props: MenuProps) => {
   const { desktop = false, afterClick } = props
   const { toggles } = useFeatureToggle()
+  const applicationsPaused = toggles.applicationsPaused
 
   const handleClick = (dest: string) => {
     if (typeof window === 'undefined') return
@@ -118,10 +119,14 @@ const Menu = (props: MenuProps) => {
       {toggles.dashboard && (
         <Box component="div" data-aos="fade" data-aos-delay="1250" data-aos-duration="1250">
           <SignUpButton
-            href="/login"
+            href={applicationsPaused ? '/applications-paused' : '/login'}
             navbar={desktop}
             glow
-            {...(!toggles.signupHacker && { text: 'Login' })}
+            {...(applicationsPaused
+              ? { text: 'Applications Paused' }
+              : !toggles.signupHacker
+                ? { text: 'Login' }
+                : {})}
           />
         </Box>
       )}

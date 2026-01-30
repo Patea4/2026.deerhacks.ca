@@ -62,10 +62,12 @@ const TileSchedule = (props: Props) => {
       variant={hasEvents ? 'elevation' : 'outlined'}
       elevation={hasEvents ? 5 : 0}
       sx={{
-        transition: 'all 0.2s ease',
-        border: '1px solid rgba(255, 255, 255, 0)',
-        backgroundImage:
-          'radial-gradient(circle closest-corner at 62% 60%, rgb(52 139 209 / 30%), rgba(255, 255, 255, 0)),radial-gradient(circle farthest-side at 75% 16%, rgb(255 255 255 / 10%), rgba(255, 255, 255, 0) 35%),radial-gradient(circle closest-corner at 32% 38%, rgb(87 65 174 / 20%), rgba(255, 255, 255, 0) 76%),radial-gradient(circle farthest-side at 69% 81%, rgba(255, 0, 48, 0.1), rgba(255, 255, 255, 0) 76%),linear-gradient(#202124, #202124)',
+        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+        background: hasEvents
+          ? 'radial-gradient(circle at 70% 30%, rgba(144, 202, 249, 0.15), transparent 50%), rgba(30, 30, 35, 0.7)'
+          : undefined,
+        backdropFilter: 'blur(20px)',
+        WebkitBackdropFilter: 'blur(20px)',
       }}
     >
       <CardActionArea href="/schedule" LinkComponent={NextLink} disabled={!hasEvents}>

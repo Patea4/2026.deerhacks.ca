@@ -8,11 +8,11 @@ type Props = {
 }
 
 export const useEventList = (props?: Props) => {
-  return useAPI().useQuery(['mockEventList', null], {
+  return useAPI().useQuery(['eventList', null], {
     enabled: props?.enabled,
     retry: false,
-    staleTime: Infinity,
-    refetchOnMount: false,
+    staleTime: 5 * 60 * 1000,
+    refetchOnMount: true,
     refetchOnWindowFocus: false,
     onSuccess: (resp) => {
       resp.parsedData = parseEvents(resp.data)

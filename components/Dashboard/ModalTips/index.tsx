@@ -29,9 +29,9 @@ const ModalTips = (props: Props) => {
   const [expanded, setExpanded] = useState<string | false>('dashboard')
   const handleChange =
     (panel: string) =>
-    ({}, different: boolean) => {
-      setExpanded(different ? panel : false)
-    }
+      ({ }, different: boolean) => {
+        setExpanded(different ? panel : false)
+      }
 
   const qrCodeEnabled = [
     'admin',
@@ -144,8 +144,8 @@ const ModalTips = (props: Props) => {
               </Typography>
               <Typography>
                 Alternatively, you can email us at{' '}
-                <Link href="mailto:hello@deerhacks.ca" underline="always" sx={{ opacity: 0.75 }}>
-                  hello@deerhacks.ca
+                <Link href="mailto:mcss@utmsu.ca" underline="always" sx={{ opacity: 0.75 }}>
+                  mcss@utmsu.ca
                 </Link>
                 . We are always open to feedback and suggestions at DeerHacks. If you have any
                 concerns, ideas, or found a bug in our dashboard please let us know!
