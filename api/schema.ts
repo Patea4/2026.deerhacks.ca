@@ -6,7 +6,7 @@ import {
   ResumeGetResp,
   ResumeUpdateResp,
 } from '@/types/Application'
-import { EmailVerifyReq, EmailVerifyResp } from '@/types/Email'
+import { EmailSendReq, EmailSendResp, EmailVerifyReq, EmailVerifyResp } from '@/types/Email'
 import { EventListResp, eventListStatic } from '@/types/Event'
 import { PhotoListResp, photoListStatic } from '@/types/Photo'
 import { QRCheckInReq, QRCheckInResp, QRUserGetParams } from '@/types/QRCode'
@@ -57,6 +57,10 @@ const email = (customFetch: CustomFetch) =>
     emailVerify: async (args: EmailVerifyReq) => {
       const res = await customFetch('POST', 'DH_BE', '/email-verify', args)
       return res.data as EmailVerifyResp
+    },
+    emailSend: async (args: EmailSendReq) => {
+      const res = await customFetch('POST', 'DH_BE', '/admin-email-send', args)
+      return res.data as EmailSendResp
     },
   } as const)
 

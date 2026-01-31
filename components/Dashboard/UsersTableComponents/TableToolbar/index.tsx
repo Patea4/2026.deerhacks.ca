@@ -2,6 +2,7 @@ import { Suspense, useState } from 'react'
 
 import AdminPanelSettingsRoundedIcon from '@mui/icons-material/AdminPanelSettingsRounded'
 import BubbleChartIcon from '@mui/icons-material/BubbleChart'
+import EmailIcon from '@mui/icons-material/Email'
 import FaceIcon from '@mui/icons-material/Face'
 import SearchRoundedIcon from '@mui/icons-material/SearchRounded'
 import SettingsIcon from '@mui/icons-material/Settings'
@@ -17,9 +18,10 @@ import { GridToolbarContainer } from '@mui/x-data-grid'
 
 import LoadingButton from '@/components/Dashboard/LoadingButton'
 import Modal from '@/components/Dashboard/Modal'
+import EmailModal from '@/components/Dashboard/EmailModal'
 import UserStatusFilter from '@/components/Dashboard/UsersTableComponents/UserStatusFilter'
 import theme from '@/styles/theme'
-import { UserListParams, UserStatus } from '@/types/User'
+import { UserListData, UserListParams, UserStatus } from '@/types/User'
 
 type Props = {
   queryParams: UserListParams
@@ -27,12 +29,23 @@ type Props = {
   onSave: () => void
   hasUnsavedChanges?: boolean
   isLoading?: boolean
+  selectedUsers?: UserListData[]
+  onClearSelection?: () => void
 }
 
 const TableToolbar = (props: Props) => {
-  const { queryParams, applyFilters, onSave, hasUnsavedChanges = false, isLoading = false } = props
+  const {
+    queryParams,
+    applyFilters,
+    onSave,
+    hasUnsavedChanges = false,
+    isLoading = false,
+    selectedUsers = [],
+    onClearSelection,
+  } = props
 
   const [openDataSettings, setOpenDataSettings] = useState(false)
+  const [openEmailModal, setOpenEmailModal] = useState(false)
 
   const [full, setFull] = useState(queryParams.full)
   const [statuses, setStatuses] = useState<UserStatus[]>(queryParams.statuses)
@@ -102,6 +115,14 @@ const TableToolbar = (props: Props) => {
             sx={{ gap: 0, p: '0.75rem 1rem' }}
           >
             Data Settings
+          </Button>
+          <Button
+            disabled={isLoading || selectedUsers.length === 0}
+            startIcon={<EmailIcon />}
+            onClick={() => setOpenEmailModal(true)}
+            sx={{ gap: 0, p: '0.75rem 1rem' }}
+          >
+            Send Email {selectedUsers.length > 0 && `(${selectedUsers.length})`}
           </Button>
         </Box>
         <Box
@@ -237,6 +258,14 @@ const TableToolbar = (props: Props) => {
           </FormGroup>
         </Modal>
       </Suspense>
+      <EmailModal
+        open={openEmailModal}
+        onClose={() => {
+          setOpenEmailModal(false)
+          onClearSelection?.()
+        }}
+        selectedUsers={selectedUsers}
+      />
     </>
   )
 }

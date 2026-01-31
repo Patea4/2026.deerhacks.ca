@@ -7,7 +7,12 @@ import Box from '@mui/material/Box'
 import Container from '@mui/material/Container'
 import Fade from '@mui/material/Fade'
 import Typography from '@mui/material/Typography'
-import { DataGrid, FooterPropsOverrides, GridColumnVisibilityModel } from '@mui/x-data-grid'
+import {
+  DataGrid,
+  FooterPropsOverrides,
+  GridColumnVisibilityModel,
+  GridRowSelectionModel,
+} from '@mui/x-data-grid'
 
 import Modal from '@/components/Dashboard/Modal'
 import FormReview from '@/components/Dashboard/RegistrationForms/Review'
@@ -77,6 +82,7 @@ const UsersTable = (props: Props) => {
   const [originalData, setOriginalData] = useState(data)
   const [users, setUsers] = useState(data)
   const [rowCount, setRowCount] = useState(totalUsers)
+  const [selectedRows, setSelectedRows] = useState<string[]>([])
   const [columnVisibilityModel, setColumnVisibilityModel] = useState<GridColumnVisibilityModel>({
     first_name: true,
     last_name: true,
@@ -94,6 +100,7 @@ const UsersTable = (props: Props) => {
     setUsers(data)
     setRowCount(totalUsers)
     setUpdateReq({ users: [] })
+    setSelectedRows([])
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dataFetched])
 
@@ -139,6 +146,7 @@ const UsersTable = (props: Props) => {
     <>
       <DataGrid
         autoHeight
+        getRowId={(row) => row.discord_id}
         rows={getRows(users)}
         columns={getColumns({
           users,
@@ -160,6 +168,8 @@ const UsersTable = (props: Props) => {
             onSave,
             hasUnsavedChanges,
             isLoading,
+            selectedUsers: users.filter((u) => selectedRows.includes(u.discord_id)),
+            onClearSelection: () => setSelectedRows([]),
           },
           footer: { fullWidth, setFullWidth } as FooterPropsOverrides,
         }}
@@ -171,7 +181,12 @@ const UsersTable = (props: Props) => {
         onPaginationModelChange={(model) => handleApplyFilters({ page: model.page + 1 })}
         disableColumnFilter
         density="comfortable"
-        disableRowSelectionOnClick
+        checkboxSelection
+        rowSelectionModel={selectedRows}
+        onRowSelectionModelChange={(newSelection: GridRowSelectionModel) => {
+          setSelectedRows(newSelection as string[])
+        }}
+        disableRowSelectionOnClick={false}
         columnVisibilityModel={columnVisibilityModel}
         onColumnVisibilityModelChange={(newModel) => setColumnVisibilityModel(newModel)}
       />
