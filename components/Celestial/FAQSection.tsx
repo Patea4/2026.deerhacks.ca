@@ -63,9 +63,8 @@ const FAQSection = () => {
             return (
               <div
                 key={faq.question}
-                className={`glass-card rounded-xl border transition-all duration-300 ${
-                  isOpen ? 'border-primary/40 bg-primary/5' : 'border-border/60 hover:border-border'
-                }`}
+                className={`glass-card rounded-xl border transition-all duration-300 ${isOpen ? 'border-primary/40 bg-primary/5' : 'border-border/60 hover:border-border'
+                  }`}
                 data-state={isOpen ? 'open' : 'closed'}
               >
                 <button
@@ -79,16 +78,14 @@ const FAQSection = () => {
                   </span>
                   <span className={`ml-4 p-1 rounded-full transition-all ${isOpen ? 'bg-primary/20' : 'bg-secondary'}`}>
                     <ChevronDown
-                      className={`h-4 w-4 shrink-0 transition-transform duration-300 ${
-                        isOpen ? 'rotate-180 text-primary' : 'text-muted-foreground'
-                      }`}
+                      className={`h-4 w-4 shrink-0 transition-transform duration-300 ${isOpen ? 'rotate-180 text-primary' : 'text-muted-foreground'
+                        }`}
                     />
                   </span>
                 </button>
                 <div
-                  className={`grid overflow-hidden text-sm transition-all duration-300 ${
-                    isOpen ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'
-                  }`}
+                  className={`grid overflow-hidden text-sm transition-all duration-300 ${isOpen ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'
+                    }`}
                 >
                   <div className="text-muted-foreground px-6 pb-5 leading-relaxed min-h-0">
                     {faq.answer}
@@ -105,14 +102,14 @@ const FAQSection = () => {
             <p className="text-muted-foreground">
               Still have questions?{' '}
               <a
-                href="mailto:hello@deerhacks.ca"
+                href="mailto:mcss@utmsu.ca"
                 className="text-primary hover:text-accent transition-colors font-medium"
               >
                 Contact us
               </a>{' '}
               or join our{' '}
               <a
-                href="https://discord.gg/deerhacks"
+                href="https://discord.gg/8TH2dRG3pY"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-primary hover:text-accent transition-colors font-medium"

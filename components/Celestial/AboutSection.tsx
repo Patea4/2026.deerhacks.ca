@@ -1,4 +1,4 @@
-import { Code, Rocket, Trophy, Users, Zap, Heart } from 'lucide-react'
+import { Code, Rocket, Users, Zap, Heart } from 'lucide-react'
 
 const features = [
   {
@@ -16,17 +16,11 @@ const features = [
     title: 'Connect',
     description: 'Network with fellow innovators, industry professionals, and top sponsors.',
   },
-  {
-    icon: Trophy,
-    title: 'Win Prizes',
-    description: 'Compete for amazing prizes and recognition for your creative solutions.',
-  },
 ]
 
-const stats = [
+const stats: Array<{ value: string; label: string; suffix: string; prefix?: string }> = [
   { value: '36', label: 'Hours', suffix: '' },
   { value: '500', label: 'Hackers', suffix: '+' },
-  { value: '10K', label: 'In Prizes', suffix: '+', prefix: '$' },
   { value: '50', label: 'Projects', suffix: '+' },
 ]
 
@@ -54,7 +48,7 @@ const AboutSection = () => {
         </div>
 
         {/* Feature cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-20">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-20">
           {features.map((feature, index) => (
             <div
               key={feature.title}
@@ -81,11 +75,12 @@ const AboutSection = () => {
               <div className="absolute bottom-0 left-0 w-1/3 h-1/2 bg-space-nebula/10 blur-[60px]" />
             </div>
 
-            <div className="relative grid grid-cols-2 md:grid-cols-4 gap-8 sm:gap-12">
+            <div className="relative grid grid-cols-2 md:grid-cols-3 gap-8 sm:gap-12">
               {stats.map((stat, index) => (
                 <div key={stat.label} className="text-center">
                   <div className="text-4xl sm:text-5xl md:text-6xl font-display font-bold text-gradient mb-2">
-                    {stat.prefix}{stat.value}<span className="text-primary/70">{stat.suffix}</span>
+                    {stat.prefix ?? ''}{stat.value}
+                    <span className="text-primary/70">{stat.suffix}</span>
                   </div>
                   <div className="text-muted-foreground text-sm uppercase tracking-widest font-medium">
                     {stat.label}

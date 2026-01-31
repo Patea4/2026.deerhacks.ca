@@ -10,7 +10,6 @@ import { useFeatureToggle } from '@/contexts/FeatureToggle'
 import { getButtonClassName } from './buttonStyles'
 
 const navLinks = [
-  { label: 'Schedule', href: '/schedule' },
   { label: 'Code of Conduct', href: '/code' },
 ]
 

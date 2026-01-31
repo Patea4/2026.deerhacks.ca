@@ -1,6 +1,6 @@
 import NextLink from 'next/link'
 
-import { Calendar, MapPin, Users, Sparkles } from 'lucide-react'
+import { MapPin, Users, Sparkles } from 'lucide-react'
 
 import { useFeatureToggle } from '@/contexts/FeatureToggle'
 
@@ -81,10 +81,6 @@ const HeroSection = () => {
             <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-secondary/50 border border-border/50">
               <MapPin className="w-4 h-4 text-primary" />
               <span className="text-sm text-foreground">University of Toronto Mississauga</span>
-            </div>
-            <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-secondary/50 border border-border/50">
-              <Calendar className="w-4 h-4 text-primary" />
-              <span className="text-sm text-foreground">36 Hours</span>
             </div>
             <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-secondary/50 border border-border/50">
               <Users className="w-4 h-4 text-primary" />

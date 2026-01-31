@@ -9,7 +9,6 @@ import { getButtonClassName } from './buttonStyles'
 
 const navLinks = [
   { label: 'About', href: '#about' },
-  { label: 'Schedule', href: '#schedule' },
   { label: 'Sponsors', href: '#sponsors' },
   { label: 'FAQ', href: '#faq' },
 ]
