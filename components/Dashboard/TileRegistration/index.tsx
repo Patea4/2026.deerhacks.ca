@@ -59,16 +59,15 @@ const TileRegistration = (props: Props) => {
             {paused
               ? 'Applications are temporarily paused. Please check back soon.'
               : disabled
-              ? `Registration is closed ${
-                  status === 'pending'
-                    ? 'while email is unverified'
-                    : 'during this time. Thanks for checking our DeerHacks!'
+                ? `Registration is closed ${status === 'pending'
+                  ? 'while email is unverified'
+                  : 'during this time. Thanks for checking our DeerHacks!'
                 }`
-              : status === 'registering'
-              ? 'Get started on your registration for DeerHacks! Hacker applications are open until January 31'
-              : noApplication
-              ? `${status.title()}s cannot register as hackers`
-              : 'Revisit your application to DeerHacks'}
+                : status === 'registering'
+                  ? 'Get started on your registration for DeerHacks! Hacker applications are open until February 12'
+                  : noApplication
+                    ? `${status.title()}s cannot register as hackers`
+                    : 'Revisit your application to DeerHacks'}
           </Typography>
         </CardContent>
       </CardActionArea>
